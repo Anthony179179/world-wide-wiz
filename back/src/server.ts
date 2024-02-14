@@ -116,7 +116,7 @@ app.post("/api/logout", async (req, res) => {
 });
 
 //add a user
-app.post("api/users/:userId", async (req, res) => {
+app.post("api/users/", async (req, res) => {
   return res.json();
 });
 
