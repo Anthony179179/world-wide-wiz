@@ -25,24 +25,24 @@ app.get("/api/users/:userId/quizzes", async (req, res) => {
   return res.json();
 });
 
-//get a quiz created by a user from id
-app.get("/api/users/:userId/quizzes/:quizId", async (req, res) => {
+//get a quiz created by a user from username
+app.get("/api/quizzes/:username", async (req, res) => {
   return res.json();
 });
 
 // get a user's scores on all quizzes
-app.get("api/users/:userId/quizzes/scores", async (req, res) => {
+app.get("api/quizscores/:username", async (req, res) => {
   return res.json();
 });
 
 // get a user's score on a quiz
-app.get("api/users/:userId/quizzes/:quizId/scores", async (req, res) => {
+app.get("api/quizscores/:username/:quizID", async (req, res) => {
   return res.json();
 });
 
 // get a user's score on a quiz question
 app.get(
-  "api/users/:userId/quizzes/:quizId/questions/:questionId/scores",
+  "api/questionscores/:username/:questionID",
   async (req, res) => {
     return res.json();
   }
@@ -50,7 +50,7 @@ app.get(
 
 // get a user's scores on all quiz questions of a quiz
 app.get(
-  "api/users/:userId/quizzes/:quizId/questions/scores",
+  "api/questionscores/:username/:quizID",
   async (req, res) => {
     return res.json();
   }
@@ -67,7 +67,7 @@ app.get("/api/quizzes/:quizId", async (req, res) => {
 });
 
 // get all questions on a quiz
-app.get("api/quizzes/:quizId/questions", async (req, res) => {
+app.get("api/questions/:quizId", async (req, res) => {
   return res.json();
 });
 
@@ -76,30 +76,30 @@ app.get("api/quizzes/:quizId/questions", async (req, res) => {
 //
 
 // delete all quizzes created by user
-app.delete("api/users/:userId/quizzes", async (req, res) => {
+app.delete("api/quizzes/:username", async (req, res) => {
   return res.json();
 });
 
 // delete a user's quiz by id
-app.delete("api/users/:userId/quizzes/:quizId", async (req, res) => {
+app.delete("api/quizzes/:quizId", async (req, res) => {
   return res.json();
 });
 
 // delete a user's quiz score (must all delete all scores on all questions in the quiz)
-app.delete("api/users/:userId/quizzes/:quizId/scores", async (req, res) => {
+app.delete("api/quizscores/:username/:quizId", async (req, res) => {
   return res.json();
 });
 
 // delete a question on a user's quiz
 app.delete(
-  "api/users/:userId/quizzes/:quizId/questions/:questionId",
+  "api/questions/:questionId",
   async (req, res) => {
     return res.json();
   }
 );
 
 // delete all questions on a user's quiz
-app.delete("api/users/:userId/quizzes/:quizId/questions", async (req, res) => {
+app.delete("api/questions/:quizId", async (req, res) => {
   return res.json();
 });
 
@@ -116,12 +116,13 @@ app.post("/api/logout", async (req, res) => {
 });
 
 //add a user
-app.post("api/users/", async (req, res) => {
+app.post("api/signup", async (req, res) => {
   return res.json();
 });
 
 //add a user's quiz
-app.post("api/users/:userId/quizzes/", async (req, res) => {
+app.post("api/quizzes", async (req, res) => {
+  //Validate shape with zod
   return res.json();
 });
 
