@@ -15,13 +15,13 @@ app.listen(port, host, () => {
 // GET REQUESTS
 //
 
-// get user by id
-app.get("/api/users/:userId", async (req, res) => {
+// get user by username
+app.get("/api/users/:username", async (req, res) => {
   return res.json();
 });
 
 // get all quizzes created by a user
-app.get("/api/users/:userId/quizzes", async (req, res) => {
+app.get("/api/users/:username/quizzes", async (req, res) => {
   return res.json();
 });
 
@@ -31,30 +31,24 @@ app.get("/api/quizzes/:username", async (req, res) => {
 });
 
 // get a user's scores on all quizzes
-app.get("api/quizscores/:username", async (req, res) => {
+app.get("/api/quizscores/:username", async (req, res) => {
   return res.json();
 });
 
 // get a user's score on a quiz
-app.get("api/quizscores/:username/:quizID", async (req, res) => {
+app.get("/api/quizscores/:username/:quizID", async (req, res) => {
   return res.json();
 });
 
 // get a user's score on a quiz question
-app.get(
-  "api/questionscores/:username/:questionID",
-  async (req, res) => {
-    return res.json();
-  }
-);
+app.get("/api/questionscores/:username/:questionID", async (req, res) => {
+  return res.json();
+});
 
 // get a user's scores on all quiz questions of a quiz
-app.get(
-  "api/questionscores/:username/:quizID",
-  async (req, res) => {
-    return res.json();
-  }
-);
+app.get("/api/questionscores/:username/:quizID", async (req, res) => {
+  return res.json();
+});
 
 // get all quizzes
 app.get("/api/quizzes", async (req, res) => {
@@ -67,7 +61,7 @@ app.get("/api/quizzes/:quizId", async (req, res) => {
 });
 
 // get all questions on a quiz
-app.get("api/questions/:quizId", async (req, res) => {
+app.get("/api/questions/:quizId", async (req, res) => {
   return res.json();
 });
 
@@ -76,30 +70,27 @@ app.get("api/questions/:quizId", async (req, res) => {
 //
 
 // delete all quizzes created by user
-app.delete("api/quizzes/:username", async (req, res) => {
+app.delete("/api/quizzes/:username", async (req, res) => {
   return res.json();
 });
 
 // delete a user's quiz by id
-app.delete("api/quizzes/:quizId", async (req, res) => {
+app.delete("/api/quizzes/:quizId", async (req, res) => {
   return res.json();
 });
 
-// delete a user's quiz score (must all delete all scores on all questions in the quiz)
-app.delete("api/quizscores/:username/:quizId", async (req, res) => {
+// delete a user's quiz score (must delete all scores on all questions in the quiz)
+app.delete("/api/quizscores/:username/:quizId", async (req, res) => {
   return res.json();
 });
 
 // delete a question on a user's quiz
-app.delete(
-  "api/questions/:questionId",
-  async (req, res) => {
-    return res.json();
-  }
-);
+app.delete("/api/questions/:questionId", async (req, res) => {
+  return res.json();
+});
 
 // delete all questions on a user's quiz
-app.delete("api/questions/:quizId", async (req, res) => {
+app.delete("/api/questions/:quizId", async (req, res) => {
   return res.json();
 });
 
@@ -107,50 +98,38 @@ app.delete("api/questions/:quizId", async (req, res) => {
 // POST REQUESTS
 //
 
+// login
 app.post("/api/login", async (req, res) => {
   return res.json();
 });
 
+// logout
 app.post("/api/logout", async (req, res) => {
   return res.json();
 });
 
-//add a user
-app.post("api/signup", async (req, res) => {
+//add a user through signup
+app.post("/api/signup", async (req, res) => {
   return res.json();
 });
 
-//add a user's quiz
-app.post("api/quizzes", async (req, res) => {
-  //Validate shape with zod
+//add a quiz score to a quiz
+app.post("/api/quizscores", async (req, res) => {
   return res.json();
 });
 
-//add a user's quiz question
-app.post("api/users/:userId/quizzes/:quizId/questions", async (req, res) => {
+//add a score to a quiz question
+app.post("/api/questionscores", async (req, res) => {
   return res.json();
 });
-
-//add a quiz score to a user's quiz
-app.post("api/users/:userId/quizzes/:quizId/scores", async (req, res) => {
-  return res.json();
-});
-
-//add a score to user's quiz's question
-app.post(
-  "api/users/:userId/quizzes/:quizId/questions/:questionId/scores",
-  async (req, res) => {
-    return res.json();
-  }
-);
 
 //add a quiz
-app.post("api/quizzes/", async (req, res) => {
+app.post("/api/quizzes/", async (req, res) => {
   return res.json();
 });
 
 //add a question to a quiz
-app.post("api/quizzes/:quizId/questions", async (req, res) => {
+app.post("/api/questions", async (req, res) => {
   return res.json();
 });
 
@@ -159,39 +138,26 @@ app.post("api/quizzes/:quizId/questions", async (req, res) => {
 //
 
 // edit a user
-app.put("api/users/:userId", async (req, res) => {
-  return res.json();
-});
-
-// edit a user's quiz
-app.put("api/users/:userId/quizzes/", async (req, res) => {
-  return res.json();
-});
-
-// edit a user's quiz question
-app.put("api/users/:userId/quizzes/:quizId/questions", async (req, res) => {
+app.put("api/users", async (req, res) => {
   return res.json();
 });
 
 // edit a quiz score to a user's quiz
-app.put("api/users/:userId/quizzes/:quizId/scores", async (req, res) => {
+app.put("/api/quizscores", async (req, res) => {
   return res.json();
 });
 
-// edit a score to user's quiz's question
-app.put(
-  "api/users/:userId/quizzes/:quizId/questions/:questionId/scores",
-  async (req, res) => {
-    return res.json();
-  }
-);
+// edit a score to a quiz question
+app.put("/api/questionscores", async (req, res) => {
+  return res.json();
+});
 
 // edit a quiz
-app.put("api/quizzes/", async (req, res) => {
+app.put("/api/quizzes/", async (req, res) => {
   return res.json();
 });
 
 // edit a question to a quiz
-app.put("api/quizzes/:quizId/questions", async (req, res) => {
+app.put("/api/questions", async (req, res) => {
   return res.json();
 });
