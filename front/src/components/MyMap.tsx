@@ -1,25 +1,37 @@
-import { useState } from "react";
 import { MapContainer, GeoJSON } from "react-leaflet";
 import mapData from "../data/countries.json";
 import "leaflet/dist/leaflet.css";
 import "./MyMap.css";
 
+interface CountryData {
+  type: string;
+  properties: {
+    ADMIN: string;
+    ISO_A3: string;
+  };
+  geometry: {
+    type: string;
+    coordinates: number[];
+  };
+}
+
 function MyMap() {
+  let countries: CountryData[] = mapData.features;
   let randomIndex: number = 0;
 
   let countryStyle = {
-    fillColor: "red",
+    fillColor: "grey",
     weight: 2,
     color: "black",
+    fillOpacity: 1,
   };
+
+  let correctCountryName: string = countries[randomIndex].properties.ADMIN;
 
   let onEachCountry = (country, layer) => {
     layer.on({
       click: (event: any) => {
-        if (
-          event.target.feature.properties.ADMIN ===
-          mapData.features[randomIndex].properties.ADMIN
-        ) {
+        if (country.properties.ADMIN === correctCountryName) {
           event.target.setStyle({
             fillColor: "green",
           });
@@ -29,6 +41,8 @@ function MyMap() {
           });
         }
         randomIndex = Math.floor(Math.random() * mapData.features.length);
+        correctCountryName = countries[randomIndex].properties.ADMIN;
+        console.log(correctCountryName);
       },
     });
   };
@@ -37,7 +51,7 @@ function MyMap() {
     <>
       <div>
         <h1>Map</h1>
-        <div>{mapData.features[randomIndex].properties.ADMIN}</div>
+        <div>{correctCountryName}</div>
         <MapContainer></MapContainer>
         <MapContainer
           style={{ height: "80vh" }}
