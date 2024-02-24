@@ -1,44 +1,32 @@
 import { MapContainer, GeoJSON } from "react-leaflet";
 import mapData from "../data/countries.json";
 import countriesWithRegions from "../data/countries_with_regions.json";
-
+import { shuffle, filterCountriesByRegion, CountryData } from "./utils";
 import "leaflet/dist/leaflet.css";
 import "./MyMap.css";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
-interface CountryData {
-  type: string;
-  properties: {
-    ADMIN: string;
-    ISO_A3: string;
-  };
-  geometry: {
-    type: string;
-    coordinates: number[];
-  };
-}
+function useStableCallback<Args extends unknown[], Return>(
+  callback: (...args: Args) => Return
+) {
+  const callbackRef = useRef(callback);
+  callbackRef.current = callback;
 
-function filterCountriesByRegion(countries, countriesWithRegions, region) {
-  return countries.filter((country) => {
-    const countryData = countriesWithRegions.find(
-      (countryWithRegion) =>
-        countryWithRegion["alpha-3"] === country.properties.ISO_A3
-    );
-    return (
-      countryData &&
-      countryData.region.toLowerCase().trim() === region.toLowerCase().trim()
-    );
-  });
+  const stableCallback = useCallback((...args: Args) => {
+    return callbackRef.current(...args);
+  }, []);
+
+  return stableCallback;
 }
 
 function MyMap() {
-  let [correctCountryName, setCorrectCountryName] = useState("Aruba");
+  let [countryColors, setCountryColors] = useState({});
+  let [score, setScore] = useState(0);
 
   const { region } = useParams();
 
   let countries: CountryData[] = mapData.features;
-  let randomIndex: number = 0;
 
   let filteredCountries = filterCountriesByRegion(
     countries,
@@ -46,32 +34,38 @@ function MyMap() {
     region
   );
 
-  let countryStyle = {
+  let [countriesArray, setCountriesArray] = useState(
+    shuffle(filteredCountries)
+  );
+
+  let defaultCountryStyle = {
     fillColor: "grey",
     weight: 2,
     color: "black",
     fillOpacity: 1,
   };
 
-  // let correctCountryName: string =
-  //   filteredCountries[randomIndex].properties.ADMIN;
+  let checkAnswer = (event: any) => {
+    let correctCountryName = countriesArray[0].properties.ADMIN;
+
+    setCountryColors((previousCountryColors) => {
+      const updatedColors = { ...previousCountryColors };
+      updatedColors[correctCountryName] =
+        event.target.feature.properties.ADMIN === correctCountryName
+          ? "green"
+          : "red";
+      return updatedColors;
+    });
+
+    setCountriesArray((prevCountriesArray) => prevCountriesArray.slice(1));
+  };
+
+  console.log(countryColors);
+  const stableCheckAnswer = useStableCallback(checkAnswer);
 
   let onEachCountry = (country, layer) => {
     layer.on({
-      click: (event: any) => {
-        if (country.properties.ADMIN === correctCountryName) {
-          event.target.setStyle({
-            fillColor: "green",
-          });
-        } else {
-          event.target.setStyle({
-            fillColor: "red",
-          });
-        }
-        randomIndex = Math.floor(Math.random() * filteredCountries.length);
-        setCorrectCountryName(filteredCountries[randomIndex].properties.ADMIN);
-        console.log(correctCountryName);
-      },
+      click: stableCheckAnswer,
     });
   };
 
@@ -79,7 +73,7 @@ function MyMap() {
     <>
       <div>
         <h1>Map</h1>
-        <div>{correctCountryName}</div>
+        <div>{countriesArray[0].properties.ADMIN}</div>
 
         <MapContainer
           style={{ height: "80vh" }}
@@ -89,7 +83,12 @@ function MyMap() {
         >
           <GeoJSON
             data={filteredCountries}
-            style={countryStyle}
+            style={(country) => ({
+              color: "black",
+              fillColor: countryColors[country.properties.ADMIN] || "grey",
+              fillOpacity: 1,
+              weight: 2,
+            })}
             onEachFeature={onEachCountry}
           />
         </MapContainer>

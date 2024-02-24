@@ -6,9 +6,8 @@ import Home from "./Home";
 function App() {
   return (
     <Router>
-      <MainLayout></MainLayout>
       <Routes>
-        <Route element={<Home />} path="/" />
+        <Route element={<MainLayout />} path="/" />
         <Route element={<MyMap />} path="/quiz/:region" />
       </Routes>
     </Router>
