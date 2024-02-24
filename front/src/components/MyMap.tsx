@@ -1,7 +1,11 @@
 import { MapContainer, GeoJSON } from "react-leaflet";
 import mapData from "../data/countries.json";
+import countriesWithRegions from "../data/countries_with_regions.json";
+
 import "leaflet/dist/leaflet.css";
 import "./MyMap.css";
+import { useParams } from "react-router-dom";
+import { useState } from "react";
 
 interface CountryData {
   type: string;
@@ -15,9 +19,32 @@ interface CountryData {
   };
 }
 
+function filterCountriesByRegion(countries, countriesWithRegions, region) {
+  return countries.filter((country) => {
+    const countryData = countriesWithRegions.find(
+      (countryWithRegion) =>
+        countryWithRegion["alpha-3"] === country.properties.ISO_A3
+    );
+    return (
+      countryData &&
+      countryData.region.toLowerCase().trim() === region.toLowerCase().trim()
+    );
+  });
+}
+
 function MyMap() {
+  let [correctCountryName, setCorrectCountryName] = useState("Aruba");
+
+  const { region } = useParams();
+
   let countries: CountryData[] = mapData.features;
   let randomIndex: number = 0;
+
+  let filteredCountries = filterCountriesByRegion(
+    countries,
+    countriesWithRegions,
+    region
+  );
 
   let countryStyle = {
     fillColor: "grey",
@@ -26,7 +53,8 @@ function MyMap() {
     fillOpacity: 1,
   };
 
-  let correctCountryName: string = countries[randomIndex].properties.ADMIN;
+  // let correctCountryName: string =
+  //   filteredCountries[randomIndex].properties.ADMIN;
 
   let onEachCountry = (country, layer) => {
     layer.on({
@@ -40,8 +68,8 @@ function MyMap() {
             fillColor: "red",
           });
         }
-        randomIndex = Math.floor(Math.random() * mapData.features.length);
-        correctCountryName = countries[randomIndex].properties.ADMIN;
+        randomIndex = Math.floor(Math.random() * filteredCountries.length);
+        setCorrectCountryName(filteredCountries[randomIndex].properties.ADMIN);
         console.log(correctCountryName);
       },
     });
@@ -52,15 +80,15 @@ function MyMap() {
       <div>
         <h1>Map</h1>
         <div>{correctCountryName}</div>
-        <MapContainer></MapContainer>
+
         <MapContainer
           style={{ height: "80vh" }}
-          center={[20, 100]}
+          center={[5, 5]}
           zoom={2}
           attributionControl={false}
         >
           <GeoJSON
-            data={mapData.features}
+            data={filteredCountries}
             style={countryStyle}
             onEachFeature={onEachCountry}
           />
