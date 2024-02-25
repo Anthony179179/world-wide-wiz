@@ -1,3 +1,5 @@
+import { useCallback, useRef } from "react";
+
 function shuffle(array: any) {
   let currentIndex = array.length;
   let randomIndex;
@@ -28,6 +30,19 @@ function filterCountriesByRegion(countries, countriesWithRegions, region) {
   });
 }
 
+function useStableCallback<Args extends unknown[], Return>(
+  callback: (...args: Args) => Return
+) {
+  const callbackRef = useRef(callback);
+  callbackRef.current = callback;
+
+  const stableCallback = useCallback((...args: Args) => {
+    return callbackRef.current(...args);
+  }, []);
+
+  return stableCallback;
+}
+
 interface CountryData {
   type: string;
   properties: {
@@ -40,5 +55,5 @@ interface CountryData {
   };
 }
 
-export { shuffle, filterCountriesByRegion };
+export { shuffle, filterCountriesByRegion, useStableCallback };
 export type { CountryData };
