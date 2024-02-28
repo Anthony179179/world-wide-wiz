@@ -55,5 +55,10 @@ interface CountryData {
   };
 }
 
+interface CountriesJSONData {
+  type: string,
+  features: CountryData[]
+}
+
 export { shuffle, filterCountriesByRegion, useStableCallback };
-export type { CountryData };
+export type { CountryData, CountriesJSONData };

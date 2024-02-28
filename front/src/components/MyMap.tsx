@@ -6,6 +6,7 @@ import {
   filterCountriesByRegion,
   CountryData,
   useStableCallback,
+  CountriesJSONData,
 } from "./utils";
 
 import {
@@ -29,7 +30,8 @@ function MyMap() {
 
   const { region } = useParams();
 
-  let countries: CountryData[] = mapData.features;
+  const data = mapData as CountriesJSONData;
+  let countries = data.features;
 
   let filteredCountries = filterCountriesByRegion(
     countries,
