@@ -16,7 +16,7 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
-
+import { Link } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 import "./MyMap.css";
 import { useParams } from "react-router-dom";
@@ -172,8 +172,18 @@ function MyMap() {
             }}
             color="primary"
           >
-            Back to Home
+            Review Answers
           </Button>
+          <Link to="/">
+            <Button
+              onClick={() => {
+                setDialogOpen(false);
+              }}
+              color="primary"
+            >
+              Back to Home
+            </Button>
+          </Link>
         </DialogActions>
       </Dialog>
     </>
