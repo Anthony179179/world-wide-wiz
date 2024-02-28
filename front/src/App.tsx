@@ -1,4 +1,4 @@
-import MyMap from "./components/MyMap";
+import MyMap from "./Components/MyMap";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainLayout from "./MainLayout";
 import Home from "./Home";
