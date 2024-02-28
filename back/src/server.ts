@@ -75,11 +75,6 @@ app.get("/api/quizzes/:username", async (req, res) => {
   }
 });
 
-// //get a quiz created by a user from username
-// app.get("/api/quizzes/:username", async (req, res) => {
-//   return res.json();
-// });
-
 // get a user's scores on all quizzes
 app.get("/api/quizscores/:username", async (req, res) => {
   try {
@@ -130,16 +125,15 @@ app.get("/api/quizzes/:quizId", async (req, res) => {
 });
 
 // get all questions on a quiz
-// Modify schema for this
-// app.get("/api/questions/:quizId", async (req, res) => {
-//   try {
-//     const questions = prisma.quiz.findUniqueOrThrow({ where: { quizId: parseInt(req.params.quizId) } })
-//     return res.status(200).json({ questions: questions });
-//   } catch (err) {
-//     let error = err as Object;
-//     return res.status(400).json({ error: error.toString() });
-//   }
-// });
+app.get("/api/questions/:quizId", async (req, res) => {
+  try {
+    const questions = prisma.question.findMany({ where: { quizid: parseInt(req.params.quizId) } })
+    return res.status(200).json({ questions: questions });
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
+});
 
 //
 // DELETE REQUESTS
@@ -174,12 +168,24 @@ app.delete("/api/quizscores/:username/:quizId", async (req, res) => {
 
 // delete a question on a user's quiz
 app.delete("/api/questions/:questionId", async (req, res) => {
-  return res.json();
+  try {
+    await prisma.question.delete({ where: { id: parseInt(req.params.questionId) } });
+    return res.status(200).json();
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
 });
 
 // delete all questions on a user's quiz
 app.delete("/api/questions/:quizId", async (req, res) => {
-  return res.json();
+  try {
+    await prisma.question.deleteMany({ where: { quizid: parseInt(req.params.quizId) } });
+    return res.status(200).json();
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
 });
 
 //

@@ -35,6 +35,7 @@ model Quiz {
   creator       User?    @relation(fields: [username], references: [username])
   username      String?
   scores        QuizScore[]
+  questions     Question[]
 }
 
 model QuizScore {
@@ -52,6 +53,8 @@ model Question {
   options       String[]
   score         Int
   order         Int
+  quiz          Quiz       @relation(fields: [quizid], references: [id])
+  quizid        Int        
   playerscores  QuestionScore[]
 }
 
