@@ -7,6 +7,8 @@ import LogIn from './Components/LogIn.tsx';
 import HomePage from './Components/HomePage.tsx';
 import SignUp from './Components/SignUp.tsx';
 import Dashboard from './Components/Dashboard.tsx';
+import MainLayout from './MainLayout.tsx';
+import MyMap from './Components/MyMap.tsx';
 
 let router = createBrowserRouter([
   {
@@ -27,6 +29,14 @@ let router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <Dashboard />
+      },
+      {
+        path: "/quiz",
+        element: <MainLayout />
+      },
+      {
+        path: "/quiz/:region",
+        element: <MyMap />
       }
     ]
   }
