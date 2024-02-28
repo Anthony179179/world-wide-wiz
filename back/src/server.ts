@@ -44,71 +44,132 @@ app.listen(port, host, () => {
 
 // get user by username
 app.get("/api/users/:username", async (req, res) => {
-  return res.json();
-});
-
-// get all quizzes created by a user
-app.get("/api/users/:username/quizzes", async (req, res) => {
-  return res.json();
-});
-
-//get a quiz created by a user from username
-app.get("/api/quizzes/:username", async (req, res) => {
-  return res.json();
-});
-
-// get a user's scores on all quizzes
-app.get("/api/quizscores/:username", async (req, res) => {
-  return res.json();
-});
-
-// get a user's score on a quiz
-app.get("/api/quizscores/:username/:quizID", async (req, res) => {
-  return res.json();
-});
-
-// get a user's score on a quiz question
-app.get("/api/questionscores/:username/:questionID", async (req, res) => {
-  return res.json();
-});
-
-// get a user's scores on all quiz questions of a quiz
-app.get("/api/questionscores/:username/:quizID", async (req, res) => {
-  return res.json();
+  try {
+    const user = await prisma.user.findUniqueOrThrow({ where: {username: req.params.username}});
+    return res.status(200).json({ user: user });
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
 });
 
 // get all quizzes
 app.get("/api/quizzes", async (req, res) => {
+  try {
+    const quizzes = await prisma.quiz.findMany();
+    return res.status(200).json({ quizzes: quizzes });
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
+});
+
+// get all quizzes created by a user
+app.get("/api/quizzes/:username", async (req, res) => {
+  try {
+    const quizzes = await prisma.quiz.findMany({ where: { username: req.params.username }});
+    return res.status(200).json({ quizzes: quizzes });
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
+});
+
+// //get a quiz created by a user from username
+// app.get("/api/quizzes/:username", async (req, res) => {
+//   return res.json();
+// });
+
+// get a user's scores on all quizzes
+app.get("/api/quizscores/:username", async (req, res) => {
+  try {
+    const quizscores = await prisma.quizScore.findMany({ where: { username: req.params.username }});
+    return res.status(200).json({ quizscores: quizscores });
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
+});
+
+// get a user's score on a quiz
+app.get("/api/quizscores/:username/:quizID", async (req, res) => {
+  try {
+    const quizscore = await prisma.quizScore.findFirstOrThrow({ where: { username: req.params.username, quizid: parseInt(req.params.quizID) }});
+    return res.status(200).json({ quizscore: quizscore });
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
+});
+
+// get a user's score on a quiz question
+app.get("/api/questionscores/:username/:questionID", async (req, res) => {
+  try {
+    const score = await prisma.questionScore.findFirstOrThrow({ where: { playername: req.params.username, questionid: parseInt(req.params.questionID) } });
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
+});
+
+// get a user's scores on all quiz questions of a quiz
+// To do that we have to modify question/(maybe questionscore) schema to add relation to quiz (do we need to do that?)
+app.get("/api/questionscores/:username/quiz/:quizID", async (req, res) => {
   return res.json();
 });
 
 // get quiz based on id of the quiz
 app.get("/api/quizzes/:quizId", async (req, res) => {
-  return res.json();
+  try {
+    const quiz = await prisma.quiz.findUniqueOrThrow({ where: { id: parseInt(req.params.quizId) } })
+    return res.status(200).json({ quiz: quiz });
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
 });
 
 // get all questions on a quiz
-app.get("/api/questions/:quizId", async (req, res) => {
-  return res.json();
-});
+// Modify schema for this
+// app.get("/api/questions/:quizId", async (req, res) => {
+//   try {
+//     const questions = prisma.quiz.findUniqueOrThrow({ where: { quizId: parseInt(req.params.quizId) } })
+//     return res.status(200).json({ questions: questions });
+//   } catch (err) {
+//     let error = err as Object;
+//     return res.status(400).json({ error: error.toString() });
+//   }
+// });
 
 //
 // DELETE REQUESTS
 //
 
-// delete all quizzes created by user
+// delete all quizzes created by user - do we really need this?
 app.delete("/api/quizzes/:username", async (req, res) => {
   return res.json();
 });
 
 // delete a user's quiz by id
 app.delete("/api/quizzes/:quizId", async (req, res) => {
-  return res.json();
+  try {
+    await prisma.quiz.delete({ where: { id: parseInt(req.params.quizId) } });
+    return res.status(200).json();
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
 });
 
-// delete a user's quiz score (must delete all scores on all questions in the quiz)
+// delete a user's quiz score (must delete all scores on all questions in the quiz) --> modify when adding quiz to questions
 app.delete("/api/quizscores/:username/:quizId", async (req, res) => {
-  return res.json();
+  try {
+    await prisma.quizScore.deleteMany({ where: { username: req.params.username } });
+    return res.status(200).json();
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
 });
 
 // delete a question on a user's quiz
@@ -214,7 +275,7 @@ app.post("/api/questions", async (req, res) => {
 });
 
 //
-// PUT REQUESTS
+// PUT REQUESTS --> Need more info about client side usage to determine request types
 //
 
 // edit a user
@@ -233,7 +294,7 @@ app.put("/api/questionscores", async (req, res) => {
 });
 
 // edit a quiz
-app.put("/api/quizzes/", async (req, res) => {
+app.put("/api/quizzes", async (req, res) => {
   return res.json();
 });
 
