@@ -27,8 +27,8 @@ import { Layer, LayerEvent } from "leaflet";
 
 function MyMap() {
   let [countryColors, setCountryColors] = useState<CountryColors>({});
-  let [score, setScore] = useState(0);
-  let [dialogOpen, setDialogOpen] = useState(false);
+  let [score, setScore] = useState<number>(0);
+  let [dialogOpen, setDialogOpen] = useState<boolean>(false);
   let [flagSrc, setFlagSrc] = useState<string>("");
 
   const { region } = useParams();
@@ -61,11 +61,16 @@ function MyMap() {
       (async () => {
         try {
           const country_iso: string = countriesArray[0].properties.ISO_A3;
-          let { data } = await axios.get(
+          let response = await axios.get(
             `https://restcountries.com/v3.1/alpha/${country_iso}`
           );
-          setFlagSrc(data[0].flags.png);
+
+          if (response.status == 200) {
+            setFlagSrc(response.data[0].flags.png);
+          }
         } catch (error) {
+          //TODO: Implement error handling
+          console.log("ERROR HAS BEEN ENCOUNTERED:");
           console.log(error);
         }
       })();
@@ -150,9 +155,13 @@ function MyMap() {
         <div>
           {isFlagsQuiz ? (
             <img
-              style={{ width: "80px", height: "50px" }}
+              style={{
+                width: "80px",
+                height: "50px",
+                border: "1px solid black",
+              }}
               src={flagSrc}
-              alt="Flag"
+              alt="Flag Not Available"
             />
           ) : (
             countriesArray.length > 0 && countriesArray[0].properties.ADMIN
