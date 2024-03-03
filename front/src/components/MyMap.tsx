@@ -6,6 +6,8 @@ import {
   filterCountriesByRegion,
   useStableCallback,
   CountriesJSONData,
+  CountryColors,
+  CountryData,
 } from "./utils";
 import axios from "axios";
 import {
@@ -21,9 +23,10 @@ import "leaflet/dist/leaflet.css";
 import "./MyMap.css";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { Layer, LayerEvent } from "leaflet";
 
 function MyMap() {
-  let [countryColors, setCountryColors] = useState({});
+  let [countryColors, setCountryColors] = useState<CountryColors>({});
   let [score, setScore] = useState(0);
   let [dialogOpen, setDialogOpen] = useState(false);
   let [flagSrc, setFlagSrc] = useState<string>("");
@@ -47,7 +50,7 @@ function MyMap() {
     filteredCountries.length
   );
 
-  let [countriesArray, setCountriesArray] = useState(
+  let [countriesArray, setCountriesArray] = useState<CountryData[]>(
     shuffle(filteredCountries)
   );
 
@@ -69,7 +72,7 @@ function MyMap() {
     }
   }, [countriesArray]);
 
-  let checkAnswer = (event: any) => {
+  let checkAnswer = (event: LayerEvent) => {
     if (countriesArray.length == 0) {
       let tooltip = event.target
         .bindTooltip(event.target.feature.properties.ADMIN, {
@@ -111,7 +114,7 @@ function MyMap() {
     setNumOfCountriesRemaining(numOfCountriesRemaining - 1);
   };
 
-  let handleMouseover = (event: any) => {
+  let handleMouseover = (event: LayerEvent) => {
     if (!countryColors[event.target.feature.properties.ADMIN]) {
       let fillColor = "lightgrey";
       event.target.setStyle({
@@ -120,7 +123,7 @@ function MyMap() {
     }
   };
 
-  let handleMouseout = (event: any) => {
+  let handleMouseout = (event: LayerEvent) => {
     event.target.setStyle({
       fillColor: countryColors[event.target.feature.properties.ADMIN] || "grey",
     });
@@ -130,7 +133,7 @@ function MyMap() {
   const stableHandleMouseover = useStableCallback(handleMouseover);
   const stableCheckAnswer = useStableCallback(checkAnswer);
 
-  let onEachCountry = (country, layer) => {
+  let onEachCountry = (_: any, layer: Layer) => {
     layer.on({
       click: stableCheckAnswer,
       mouseover: stableHandleMouseover,
@@ -141,7 +144,9 @@ function MyMap() {
   return (
     <>
       <div>
-        <h1>{region[0].toUpperCase() + region.slice(1)} Map Quiz</h1>
+        <h1>
+          {region ? region[0].toUpperCase() + region.slice(1) : ""} Map Quiz
+        </h1>
         <div>
           {isFlagsQuiz ? (
             <img
@@ -158,19 +163,24 @@ function MyMap() {
         </div>
         <div>{numOfCountriesRemaining} countries remaining</div>
         <MapContainer
-          style={{ height: "80vh" }}
+          style={{ width: "800px", height: "300px", marginBottom: "5em" }}
           center={[5, 5]}
           zoom={2}
           attributionControl={false}
         >
           <GeoJSON
             data={filteredCountries}
-            style={(country) => ({
-              color: "black",
-              fillColor: countryColors[country.properties.ADMIN] || "grey",
-              fillOpacity: 1,
-              weight: 2,
-            })}
+            style={(country) => {
+              if (!country) {
+                return {};
+              }
+              return {
+                color: "black",
+                fillColor: countryColors[country.properties.ADMIN] || "grey",
+                fillOpacity: 1,
+                weight: 2,
+              };
+            }}
             onEachFeature={onEachCountry}
           />
         </MapContainer>

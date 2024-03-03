@@ -56,9 +56,11 @@ interface CountryData {
 }
 
 interface CountriesJSONData {
-  type: string,
-  features: CountryData[]
+  type: string;
+  features: CountryData[];
 }
 
+type CountryColors = Record<string, "green" | "red">;
+
 export { shuffle, filterCountriesByRegion, useStableCallback };
-export type { CountryData, CountriesJSONData };
+export type { CountryData, CountriesJSONData, CountryColors };
