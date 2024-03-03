@@ -1,14 +1,13 @@
 import { MapContainer, GeoJSON } from "react-leaflet";
-import mapData from "../data/countries.json";
+import data from "../data/countries.json";
 import countriesWithRegions from "../data/countries_with_regions.json";
 import {
   shuffle,
   filterCountriesByRegion,
-  CountryData,
   useStableCallback,
   CountriesJSONData,
 } from "./utils";
-
+import axios from "axios";
 import {
   Button,
   Dialog,
@@ -27,11 +26,14 @@ function MyMap() {
   let [countryColors, setCountryColors] = useState({});
   let [score, setScore] = useState(0);
   let [dialogOpen, setDialogOpen] = useState(false);
+  let [flagSrc, setFlagSrc] = useState<string>("");
 
   const { region } = useParams();
 
-  const data = mapData as CountriesJSONData;
-  let countries = data.features;
+  const isFlagsQuiz: boolean = window.location.pathname.endsWith("/flags");
+
+  const mapData = data as CountriesJSONData;
+  let countries = mapData.features;
 
   let filteredCountries = filterCountriesByRegion(
     countries,
@@ -39,7 +41,7 @@ function MyMap() {
     region
   );
 
-  let numOfCountries: number = filteredCountries.length;
+  const numOfCountries: number = filteredCountries.length;
 
   let [numOfCountriesRemaining, setNumOfCountriesRemaining] = useState(
     filteredCountries.length
@@ -52,6 +54,18 @@ function MyMap() {
   useEffect(() => {
     if (countriesArray.length === 0) {
       setDialogOpen(true);
+    } else {
+      (async () => {
+        try {
+          const country_iso: string = countriesArray[0].properties.ISO_A3;
+          let { data } = await axios.get(
+            `https://restcountries.com/v3.1/alpha/${country_iso}`
+          );
+          setFlagSrc(data[0].flags.png);
+        } catch (error) {
+          console.log(error);
+        }
+      })();
     }
   }, [countriesArray]);
 
@@ -129,7 +143,15 @@ function MyMap() {
       <div>
         <h1>{region[0].toUpperCase() + region.slice(1)} Map Quiz</h1>
         <div>
-          {countriesArray.length > 0 && countriesArray[0].properties.ADMIN}
+          {isFlagsQuiz ? (
+            <img
+              style={{ width: "80px", height: "50px" }}
+              src={flagSrc}
+              alt="Flag"
+            />
+          ) : (
+            countriesArray.length > 0 && countriesArray[0].properties.ADMIN
+          )}
         </div>
         <div>
           Score: {score}/{numOfCountries}
