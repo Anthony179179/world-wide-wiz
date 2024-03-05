@@ -8,7 +8,7 @@ import HomePage from "./Components/HomePage.tsx";
 import SignUp from "./Components/SignUp.tsx";
 import Dashboard from "./Components/Dashboard.tsx";
 import MainLayout from "./MainLayout.tsx";
-import MyMap from "./Components/MyMap.tsx";
+import MapQuiz from "./Components/MapQuiz.tsx";
 import Profile from "./Components/Profile.tsx";
 
 let router = createBrowserRouter([
@@ -37,11 +37,11 @@ let router = createBrowserRouter([
       },
       {
         path: "/quiz/:region",
-        element: <MyMap />,
+        element: <MapQuiz />,
       },
       {
         path: "/quiz/:region/flags",
-        element: <MyMap />,
+        element: <MapQuiz />,
       },
       {
         path: "/profile",

@@ -61,9 +61,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 function NavBar() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { auth, user, setAuth, setUser } = useContext(AuthContext);
-
-  const [temp, setTemp] = useState<string>("");
+  const { setAuth, setUser } = useContext(AuthContext);
 
   const navigate = useNavigate();
 

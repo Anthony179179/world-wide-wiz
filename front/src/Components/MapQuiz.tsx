@@ -20,12 +20,11 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
-import "./MyMap.css";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Layer, LayerEvent } from "leaflet";
 
-function MyMap() {
+function MapQuiz() {
   let [countryColors, setCountryColors] = useState<CountryColors>({});
   let [score, setScore] = useState<number>(0);
   let [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -172,7 +171,12 @@ function MyMap() {
         </div>
         <div>{numOfCountriesRemaining} countries remaining</div>
         <MapContainer
-          style={{ width: "800px", height: "300px", marginBottom: "5em" }}
+          style={{
+            width: "800px",
+            height: "300px",
+            marginBottom: "5em",
+            backgroundColor: "lightblue",
+          }}
           center={[5, 5]}
           zoom={2}
           attributionControl={false}
@@ -233,4 +237,4 @@ function MyMap() {
   );
 }
 
-export default MyMap;
+export default MapQuiz;
