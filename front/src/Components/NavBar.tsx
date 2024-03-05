@@ -1,10 +1,13 @@
-import { useState, MouseEvent } from "react";
+import { useState, MouseEvent, useContext } from "react";
 import { styled, alpha } from "@mui/material/styles";
-
+import { AuthContext } from "../authContext";
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MapIcon from "@mui/icons-material/Map";
 import SearchBar from "./SearchBar";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import {
   AppBar,
   Box,
@@ -58,6 +61,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 function NavBar() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { auth, user, setAuth, setUser } = useContext(AuthContext);
+
+  const [temp, setTemp] = useState<string>("");
+
+  const navigate = useNavigate();
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -68,6 +76,16 @@ function NavBar() {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
+  async function handleLogout() {
+    let logoutRes = await axios.post("/api/logout");
+    console.log(logoutRes.status);
+    if (logoutRes.status === 200) {
+      setUser(null);
+      setAuth(false);
+      navigate("/");
+    }
+  }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -123,7 +141,7 @@ function NavBar() {
       >
         <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
         <MenuItem onClick={handleMenuClose}>Dashboard</MenuItem>
-        <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </Box>
   );

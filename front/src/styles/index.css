@@ -73,3 +73,7 @@ button:focus-visible {
 .MuiInput-input {
   background-color: #1a1a1a;
 } */
+
+body {
+  margin: 0;
+}
