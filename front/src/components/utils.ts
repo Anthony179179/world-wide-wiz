@@ -67,7 +67,29 @@ interface QuizScore {
   score: number | null;
 }
 
+interface Question {
+  id: number;
+  question: string;
+  answer: string;
+  options: string[];
+  score: number;
+}
+
+interface Quiz {
+  id: number | null;
+  name: string;
+  description: string;
+  username: string | null;
+}
+
 type CountryColors = Record<string, "green" | "red">;
 
 export { shuffle, filterCountriesByRegion, useStableCallback };
-export type { CountryData, CountriesJSONData, CountryColors, QuizScore };
+export type {
+  CountryData,
+  CountriesJSONData,
+  Quiz,
+  Question,
+  CountryColors,
+  QuizScore,
+};

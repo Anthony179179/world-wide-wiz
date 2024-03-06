@@ -8,6 +8,8 @@ import HomePage from "./Components/HomePage.tsx";
 import SignUp from "./Components/SignUp.tsx";
 import Dashboard from "./Components/Dashboard.tsx";
 import MainLayout from "./MainLayout.tsx";
+import CreateQuiz from "./Components/CreateQuiz.tsx";
+import MyQuizzes from "./Components/MyQuizzes.tsx";
 import MapQuiz from "./Components/MapQuiz.tsx";
 
 let router = createBrowserRouter([
@@ -29,6 +31,22 @@ let router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <Dashboard />,
+      },
+      {
+        path: "/myquizzes",
+        element: <MyQuizzes />,
+      },
+      {
+        path: "/createquiz",
+        element: <CreateQuiz />,
+      },
+      {
+        path: "/myquizzes",
+        element: <MyQuizzes />,
+      },
+      {
+        path: "/createquiz",
+        element: <CreateQuiz />,
       },
       {
         path: "/quiz",
