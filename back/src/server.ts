@@ -124,16 +124,28 @@ app.get("/api/quizzes/:quizId", async (req, res) => {
   }
 });
 
-// get all questions on a quiz
-app.get("/api/questions/:quizId", async (req, res) => {
+app.get("/api/questions", async (req, res) => {
   try {
-    const questions = prisma.question.findMany({ where: { quizid: parseInt(req.params.quizId) } })
+    const questions = await prisma.question.findMany();
     return res.status(200).json({ questions: questions });
   } catch (err) {
     let error = err as Object;
     return res.status(400).json({ error: error.toString() });
   }
 });
+
+// get all questions on a quiz
+app.get("/api/questions/:quizId", async (req, res) => {
+  try {
+    console.log("Retrieving questions from quiz with ID:", req.params.quizId);
+    const questions = await prisma.question.findMany({ where: { quizid: { equals: parseInt(req.params.quizId) } } })
+    return res.status(200).json({ questions: questions });
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
+});
+
 
 //
 // DELETE REQUESTS
@@ -169,10 +181,13 @@ app.delete("/api/quizscores/:username/:quizId", async (req, res) => {
 // delete a question on a user's quiz
 app.delete("/api/questions/:questionId", async (req, res) => {
   try {
-    await prisma.question.delete({ where: { id: parseInt(req.params.questionId) } });
+    const qId = parseInt(req.params.questionId);
+    console.log("QUESTION ID TO DELETE:", qId);
+    await prisma.question.delete({ where: { id: qId } });
     return res.status(200).json();
   } catch (err) {
     let error = err as Object;
+    console.log(error.toString());
     return res.status(400).json({ error: error.toString() });
   }
 });
@@ -270,14 +285,63 @@ app.post("/api/questionscores", async (req, res) => {
   return res.json();
 });
 
+interface NewQuiz {
+  name: string,
+  description: string,
+  username: string
+}
+
 //add a quiz
-app.post("/api/quizzes/", async (req, res) => {
-  return res.json();
+app.post("/api/quizzes", async (req: Request<NewQuiz>, res) => {
+  const { name, description, username } = req.body;
+  try {
+    const quiz = await prisma.quiz.create({
+      data: {
+        name: name,
+        description: description,
+        username: username,
+        pregenerated: false,
+        scores: {},
+        questions: {}
+      },
+    });
+    return res.status(201).json(quiz);
+  } catch (err) {
+    const error = err as Object;
+    console.log(error.toString());
+    return res.status(400).json({ error: error.toString() });
+  }
 });
 
+interface NewQuestion {
+  question: string,
+  answer: string,
+  options: string[],
+  quizId: number,
+  score: number,
+  order?: number
+}
+
 //add a question to a quiz
-app.post("/api/questions", async (req, res) => {
-  return res.json();
+app.post("/api/questions", async (req: Request<NewQuestion>, res) => {
+  const { question, answer, options, quizId, score, order } = req.body;
+  try {
+    const questionRes = await prisma.question.create({
+      data: {
+        question: question,
+        answer: answer,
+        options: options,
+        quizid: quizId,
+        score: score,
+        order: order
+      },
+    });
+    return res.status(201).json(questionRes);
+  } catch (err) {
+    const error = err as Object;
+    console.log(error.toString());
+    return res.status(400).json({ error: error.toString() });
+  }
 });
 
 //
