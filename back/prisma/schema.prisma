@@ -44,6 +44,7 @@ model QuizScore {
   username  String
   quiz      Quiz    @relation(fields: [quizid], references: [id])
   quizid    Int
+  score     Int
 }
 
 model Question {

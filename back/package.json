@@ -9,6 +9,9 @@
     "start": "cd out && node server.js",
     "all": "npm run build && npm run start"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -26,8 +29,9 @@
     "@types/cookie-parser": "^1.4.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
-    "@types/node": "^20.11.17",
+    "@types/node": "^20.11.24",
     "prisma": "^5.9.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
 }

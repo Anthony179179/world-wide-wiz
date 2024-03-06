@@ -1,14 +1,15 @@
 import { MapContainer, GeoJSON } from "react-leaflet";
-import mapData from "../data/countries.json";
+import data from "../data/countries.json";
 import countriesWithRegions from "../data/countries_with_regions.json";
 import {
   shuffle,
   filterCountriesByRegion,
-  CountryData,
   useStableCallback,
   CountriesJSONData,
+  CountryColors,
+  CountryData,
 } from "./utils";
-
+import axios from "axios";
 import {
   Button,
   Dialog,
@@ -19,19 +20,41 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
-import "./MyMap.css";
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { Layer, LayerEvent } from "leaflet";
+import { AuthContext } from "../authContext";
 
-function MyMap() {
-  let [countryColors, setCountryColors] = useState({});
-  let [score, setScore] = useState(0);
-  let [dialogOpen, setDialogOpen] = useState(false);
+//needd to change the way to get quizIds
+const quizIds: { [key: string]: number } = {
+  europe: 1,
+  americas: 2,
+  asia: 3,
+  africa: 4,
+  oceania: 5,
+  europe_flags: 6,
+  americas_flags: 7,
+  asia_flags: 8,
+  africa_flags: 9,
+  oceania_flags: 10,
+};
+
+interface MapQuizProps {
+  isFlagsQuiz: boolean;
+}
+
+function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
+  const { auth, user } = useContext(AuthContext);
+
+  let [countryColors, setCountryColors] = useState<CountryColors>({});
+  let [score, setScore] = useState<number>(0);
+  let [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  let [flagSrc, setFlagSrc] = useState<string>("");
 
   const { region } = useParams();
 
-  const data = mapData as CountriesJSONData;
-  let countries = data.features;
+  const mapData = data as CountriesJSONData;
+  let countries = mapData.features;
 
   let filteredCountries = filterCountriesByRegion(
     countries,
@@ -39,23 +62,61 @@ function MyMap() {
     region
   );
 
-  let numOfCountries: number = filteredCountries.length;
+  const numOfCountries: number = filteredCountries.length;
 
   let [numOfCountriesRemaining, setNumOfCountriesRemaining] = useState(
     filteredCountries.length
   );
 
-  let [countriesArray, setCountriesArray] = useState(
+  let [countriesArray, setCountriesArray] = useState<CountryData[]>(
     shuffle(filteredCountries)
   );
 
   useEffect(() => {
     if (countriesArray.length === 0) {
       setDialogOpen(true);
+
+      //might remove if statement if it causes problems
+      if (auth !== null && user !== null) {
+        (async () => {
+          const quizIdKey = isFlagsQuiz ? `${region}_flags` : region;
+          try {
+            if (quizIdKey) {
+              await axios.post(`/api/quizscores/`, {
+                username: user,
+                quizid: quizIds[quizIdKey],
+              });
+            } else {
+              console.error(`Quiz ID not found for key: ${quizIdKey}`);
+            }
+          } catch (error) {
+            //TODO: Implement error handling
+            console.log("ERROR HAS BEEN ENCOUNTERED:");
+            console.log(error);
+          }
+        })();
+      }
+    } else {
+      (async () => {
+        try {
+          const country_iso: string = countriesArray[0].properties.ISO_A3;
+          let response = await axios.get(
+            `https://restcountries.com/v3.1/alpha/${country_iso}`
+          );
+
+          if (response.status == 200) {
+            setFlagSrc(response.data[0].flags.png);
+          }
+        } catch (error) {
+          //TODO: Implement error handling
+          console.log("ERROR HAS BEEN ENCOUNTERED:");
+          console.log(error);
+        }
+      })();
     }
   }, [countriesArray]);
 
-  let checkAnswer = (event: any) => {
+  let checkAnswer = (event: LayerEvent) => {
     if (countriesArray.length == 0) {
       let tooltip = event.target
         .bindTooltip(event.target.feature.properties.ADMIN, {
@@ -97,7 +158,7 @@ function MyMap() {
     setNumOfCountriesRemaining(numOfCountriesRemaining - 1);
   };
 
-  let handleMouseover = (event: any) => {
+  let handleMouseover = (event: LayerEvent) => {
     if (!countryColors[event.target.feature.properties.ADMIN]) {
       let fillColor = "lightgrey";
       event.target.setStyle({
@@ -106,7 +167,7 @@ function MyMap() {
     }
   };
 
-  let handleMouseout = (event: any) => {
+  let handleMouseout = (event: LayerEvent) => {
     event.target.setStyle({
       fillColor: countryColors[event.target.feature.properties.ADMIN] || "grey",
     });
@@ -116,7 +177,7 @@ function MyMap() {
   const stableHandleMouseover = useStableCallback(handleMouseover);
   const stableCheckAnswer = useStableCallback(checkAnswer);
 
-  let onEachCountry = (country, layer) => {
+  let onEachCountry = (_: any, layer: Layer) => {
     layer.on({
       click: stableCheckAnswer,
       mouseover: stableHandleMouseover,
@@ -127,28 +188,52 @@ function MyMap() {
   return (
     <>
       <div>
-        <h1>{region[0].toUpperCase() + region.slice(1)} Map Quiz</h1>
+        <h1>
+          {region ? region[0].toUpperCase() + region.slice(1) : ""} Map Quiz
+        </h1>
         <div>
-          {countriesArray.length > 0 && countriesArray[0].properties.ADMIN}
+          {isFlagsQuiz ? (
+            <img
+              style={{
+                width: "80px",
+                height: "50px",
+                border: "1px solid black",
+              }}
+              src={flagSrc}
+              alt="Flag Not Available"
+            />
+          ) : (
+            countriesArray.length > 0 && countriesArray[0].properties.ADMIN
+          )}
         </div>
         <div>
           Score: {score}/{numOfCountries}
         </div>
         <div>{numOfCountriesRemaining} countries remaining</div>
         <MapContainer
-          style={{ height: "80vh" }}
+          style={{
+            width: "800px",
+            height: "300px",
+            marginBottom: "5em",
+            backgroundColor: "lightblue",
+          }}
           center={[5, 5]}
           zoom={2}
           attributionControl={false}
         >
           <GeoJSON
             data={filteredCountries}
-            style={(country) => ({
-              color: "black",
-              fillColor: countryColors[country.properties.ADMIN] || "grey",
-              fillOpacity: 1,
-              weight: 2,
-            })}
+            style={(country) => {
+              if (!country) {
+                return {};
+              }
+              return {
+                color: "black",
+                fillColor: countryColors[country.properties.ADMIN] || "grey",
+                fillOpacity: 1,
+                weight: 2,
+              };
+            }}
             onEachFeature={onEachCountry}
           />
         </MapContainer>
@@ -192,4 +277,4 @@ function MyMap() {
   );
 }
 
-export default MyMap;
+export default MapQuiz;
