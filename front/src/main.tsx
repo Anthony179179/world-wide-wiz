@@ -41,14 +41,6 @@ let router = createBrowserRouter([
         element: <CreateQuiz />,
       },
       {
-        path: "/myquizzes",
-        element: <MyQuizzes />,
-      },
-      {
-        path: "/createquiz",
-        element: <CreateQuiz />,
-      },
-      {
         path: "/quiz",
         element: <MainLayout />,
       },

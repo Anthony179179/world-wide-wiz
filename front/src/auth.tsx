@@ -12,7 +12,6 @@ function AuthProvider({ children }: any) {
 
   useEffect(() => {
     const isAuth = async () => {
-      console.log("COOKIE:", cookies.loggedIn);
       cookies.loggedIn ? setAuth(true) : setAuth(false);
       try {
         const res = await axios.get("/api/logincheck");
@@ -29,11 +28,6 @@ function AuthProvider({ children }: any) {
     isAuth();
   }, [auth]);
 
-  return (
-    <AuthContext.Provider value={{ auth, setAuth, user, setUser }}>
-      {children}
-    </AuthContext.Provider>
-  );
   return (
     <AuthContext.Provider
       value={{ auth, setAuth, user, setUser, currentQuiz, setCurrentQuiz }}

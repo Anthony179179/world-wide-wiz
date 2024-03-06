@@ -6,7 +6,7 @@ import FriendsList from "./FriendsList";
 import QuizzesCarousel from "./QuizzesCarousel";
 import axios from "axios";
 import { QuizScore } from "./utils";
-
+import { Link } from "react-router-dom";
 interface Quiz {
   description: string;
   id: number;
@@ -98,6 +98,7 @@ function Dashboard() {
   return (
     <>
       <NavBar helloText={temp} />
+      <Link to="/myquizzes"></Link>
       {pregeneratedQuizzes.length != 0 && (
         <>
           <h3>Quizzes from us</h3>
