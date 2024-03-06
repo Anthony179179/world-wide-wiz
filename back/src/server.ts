@@ -232,7 +232,7 @@ app.delete("/api/questions/:quizId", async (req, res) => {
 
 let tokenCookieOptions: CookieOptions = {
   httpOnly: true,
-  secure: false,
+  secure: true,
   sameSite: "strict",
 };
 
