@@ -39,6 +39,7 @@ function Dashboard() {
         let response = await axios.get("/api/quizzes");
 
         if (response.status == 200) {
+          //TODO: make this more efficient
           const pregeneratedQuizzesData: QuizScore[] = response.data.quizzes
             .filter((quiz: Quiz) => quiz.pregenerated)
             .map((quiz: Quiz) => ({
