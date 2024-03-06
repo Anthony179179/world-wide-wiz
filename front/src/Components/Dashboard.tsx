@@ -1,39 +1,28 @@
-import { Button } from "@mui/joy";
-import axios from "axios";
 import { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../authContext";
+import NavBar from "./NavBar";
+import FriendsList from "./FriendsList";
+import QuizzesGallery from "./QuizzesGallery";
 
 function Dashboard() {
+  const { auth, user } = useContext(AuthContext);
 
-    const { auth, user, setAuth, setUser } = useContext(AuthContext);
+  const [temp, setTemp] = useState<string>("");
 
-    const [temp, setTemp] = useState<string>("")
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  useEffect(() => {
+    auth ? setTemp(`Hello, ${user}!`) : navigate("/");
+  }, [auth]);
 
-    useEffect(() => {
-        auth ? setTemp(`You're logged in, ${user}!`) : navigate("/");
-    }, [auth])
-
-    async function handleLogout() {
-        let logoutRes = await axios.post("/api/logout");
-        console.log(logoutRes.status);
-        if (logoutRes.status === 200) {
-            setUser(null);
-            setAuth(false);
-            navigate("/");
-        }
-    }
-
-    return (
-        <>
-            <h2>{temp}</h2>
-            <Link to={"/"}>Go to Homepage    </Link>
-            <Button onClick={handleLogout}>Logout</Button>
-        </>
-    )
-
+  return (
+    <>
+      <NavBar helloText={temp} />
+      <QuizzesGallery />
+      <FriendsList />
+    </>
+  );
 }
 
-export default Dashboard
+export default Dashboard;

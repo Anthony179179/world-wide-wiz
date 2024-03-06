@@ -59,7 +59,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-function NavBar() {
+interface NavBarProps {
+  helloText: string;
+}
+
+function NavBar({ helloText }: NavBarProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { setAuth, setUser } = useContext(AuthContext);
 
@@ -107,6 +111,14 @@ function NavBar() {
           <SearchBar></SearchBar>
 
           <Box sx={{ flexGrow: 1 }} />
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ display: { xs: "none", sm: "block" } }}
+          >
+            {helloText}
+          </Typography>
           <Box sx={{ display: "flex" }}>
             <IconButton
               size="large"
