@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../authContext";
 import NavBar from "./NavBar";
 import FriendsList from "./FriendsList";
-import QuizzesGallery from "./QuizzesGallery";
+import QuizzesCarousel from "./QuizzesCarousel";
 import axios from "axios";
 import { QuizScore } from "./utils";
 
@@ -98,13 +98,27 @@ function Dashboard() {
   return (
     <>
       <NavBar helloText={temp} />
-      <h3>Quizzes from us</h3>
-      <QuizzesGallery quizzes={pregeneratedQuizzes} />
-      <h3>Quizzes from users</h3>
-      <QuizzesGallery quizzes={usergeneratedQuizzes} />
-      <h3>Quizzes you've taken</h3>
-      <QuizzesGallery quizzes={quizScores} />
-      {/* <QuizzesGallery quizzes={} /> */}
+      {pregeneratedQuizzes.length != 0 && (
+        <>
+          <h3>Quizzes from us</h3>
+          <QuizzesCarousel quizzes={pregeneratedQuizzes} />
+        </>
+      )}
+
+      {usergeneratedQuizzes.length != 0 && (
+        <>
+          <h3>Quizzes from users</h3>
+          <QuizzesCarousel quizzes={usergeneratedQuizzes} />
+        </>
+      )}
+
+      {quizScores.length != 0 && (
+        <>
+          <h3>Quizzes you've taken</h3>
+          <QuizzesCarousel quizzes={quizScores} />
+        </>
+      )}
+
       <FriendsList />
     </>
   );

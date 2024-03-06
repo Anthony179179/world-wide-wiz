@@ -26,20 +26,24 @@ import { Layer, LayerEvent } from "leaflet";
 import { AuthContext } from "../authContext";
 
 //needd to change the way to get quizIds
-const quizIds = {
-  europe: 4,
-  americas: 5,
-  asia: 6,
-  europe_flags: 7,
-  americas_flags: 8,
-  asia_flags: 9,
-  africa_flags: 10,
-  oceania_flags: 11,
-  africa: 12,
-  oceania: 13,
+const quizIds: { [key: string]: number } = {
+  europe: 1,
+  americas: 2,
+  asia: 3,
+  africa: 4,
+  oceania: 5,
+  europe_flags: 6,
+  americas_flags: 7,
+  asia_flags: 8,
+  africa_flags: 9,
+  oceania_flags: 10,
 };
 
-function MapQuiz() {
+interface MapQuizProps {
+  isFlagsQuiz: boolean;
+}
+
+function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
   const { auth, user } = useContext(AuthContext);
 
   let [countryColors, setCountryColors] = useState<CountryColors>({});
@@ -48,8 +52,6 @@ function MapQuiz() {
   let [flagSrc, setFlagSrc] = useState<string>("");
 
   const { region } = useParams();
-
-  const isFlagsQuiz: boolean = window.location.pathname.endsWith("/flags");
 
   const mapData = data as CountriesJSONData;
   let countries = mapData.features;
@@ -74,13 +76,19 @@ function MapQuiz() {
     if (countriesArray.length === 0) {
       setDialogOpen(true);
 
+      //might remove if statement if it causes problems
       if (auth !== null && user !== null) {
         (async () => {
+          const quizIdKey = isFlagsQuiz ? `${region}_flags` : region;
           try {
-            await axios.post(`/api/quizscores/`, {
-              username: user,
-              quizid: quizIds[region],
-            });
+            if (quizIdKey) {
+              await axios.post(`/api/quizscores/`, {
+                username: user,
+                quizid: quizIds[quizIdKey],
+              });
+            } else {
+              console.error(`Quiz ID not found for key: ${quizIdKey}`);
+            }
           } catch (error) {
             //TODO: Implement error handling
             console.log("ERROR HAS BEEN ENCOUNTERED:");

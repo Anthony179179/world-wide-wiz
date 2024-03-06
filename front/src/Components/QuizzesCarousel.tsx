@@ -7,10 +7,10 @@ import CardActionArea from "@mui/material/CardActionArea";
 import Typography from "@mui/material/Typography";
 import { QuizScore } from "./utils";
 
-interface QuizzesGalleryProps {
+interface QuizzesCarouselProps {
   quizzes: QuizScore[];
 }
-function QuizzesGallery({ quizzes }: QuizzesGalleryProps) {
+function QuizzesCarousel({ quizzes }: QuizzesCarouselProps) {
   const [startIndex, setStartIndex] = useState(0);
 
   const scrollLeft = () => {
@@ -63,4 +63,4 @@ function QuizzesGallery({ quizzes }: QuizzesGalleryProps) {
   );
 }
 
-export default QuizzesGallery;
+export default QuizzesCarousel;

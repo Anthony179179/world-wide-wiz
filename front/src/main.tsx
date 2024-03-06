@@ -36,11 +36,11 @@ let router = createBrowserRouter([
       },
       {
         path: "/quiz/:region",
-        element: <MapQuiz />,
+        element: <MapQuiz isFlagsQuiz={false} />,
       },
       {
         path: "/quiz/:region/flags",
-        element: <MapQuiz />,
+        element: <MapQuiz isFlagsQuiz={true} />,
       },
     ],
   },
