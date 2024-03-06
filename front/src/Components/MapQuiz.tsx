@@ -74,20 +74,20 @@ function MapQuiz() {
     if (countriesArray.length === 0) {
       setDialogOpen(true);
 
-      // if (auth !== null && user !== null) {
-      (async () => {
-        try {
-          await axios.post(`/api/quizscores/`, {
-            username: "khangarook",
-            quizid: quizIds[region],
-          });
-        } catch (error) {
-          //TODO: Implement error handling
-          console.log("ERROR HAS BEEN ENCOUNTERED:");
-          console.log(error);
-        }
-      })();
-      // }
+      if (auth !== null && user !== null) {
+        (async () => {
+          try {
+            await axios.post(`/api/quizscores/`, {
+              username: user,
+              quizid: quizIds[region],
+            });
+          } catch (error) {
+            //TODO: Implement error handling
+            console.log("ERROR HAS BEEN ENCOUNTERED:");
+            console.log(error);
+          }
+        })();
+      }
     } else {
       (async () => {
         try {

@@ -85,29 +85,6 @@ app.get("/api/quizzes/:username", async (req, res) => {
   }
 });
 
-// // get all pregenerated quizzes and the user's score on them if exist
-// app.get("/api/quizzes/:username/:pregenerated", async (req, res) => {
-//   try {
-//     const quizzes = await prisma.quiz.findMany({
-//       include: {
-//         quiz: {
-//           where: {
-//             username: req.params.username, // Assuming you have the userId available in the request
-//           },
-//           select: {
-//             score: true,
-//           },
-//         },
-//       },
-//     });
-
-//     return res.status(200).json({ quizzes: quizzes });
-//   } catch (err) {
-//     let error = err as Object;
-//     return res.status(400).json({ error: error.toString() });
-//   }
-// });
-
 // get a user's scores on all quizzes
 app.get("/api/quizscores/:username", async (req, res) => {
   try {
