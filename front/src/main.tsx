@@ -9,7 +9,6 @@ import SignUp from "./Components/SignUp.tsx";
 import Dashboard from "./Components/Dashboard.tsx";
 import MainLayout from "./MainLayout.tsx";
 import MapQuiz from "./Components/MapQuiz.tsx";
-import Profile from "./Components/Profile.tsx";
 
 let router = createBrowserRouter([
   {
@@ -42,10 +41,6 @@ let router = createBrowserRouter([
       {
         path: "/quiz/:region/flags",
         element: <MapQuiz />,
-      },
-      {
-        path: "/profile",
-        element: <Profile />,
       },
     ],
   },
