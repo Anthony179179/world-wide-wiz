@@ -8,31 +8,31 @@ function AuthProvider({children}: any) {
 
     const [auth, setAuth] = useState<boolean | null>(null);
     const [user, setUser] = useState<string | null>(null);
+    const [currentQuiz, setCurrentQuiz] = useState<number | null>(null);
 
     const [cookies, setCookie, removeCookie] = useCookies(['loggedIn']);
 
     useEffect(() => {
         const isAuth = async () => {
-            cookies.loggedIn ? setAuth(true) : setAuth(false); // This is an experiment
-            if (!auth) {
-                try {
-                    const res = await axios.get("/api/logincheck"); // I'll add this in later probably
-                    if (res.status === 200) {
-                        setUser(res.data);
-                    }
-                } catch (error) {
-                    let err = error as Object;
-                    console.log(err.toString())
-                    setUser(null);
-                };
-            }
+            console.log("COOKIE:", cookies.loggedIn);
+            cookies.loggedIn ? setAuth(true) : setAuth(false);
+            try {
+                const res = await axios.get("/api/logincheck");
+                if (res.status === 200) {
+                    setUser(res.data);
+                }
+            } catch (error) {
+                let err = error as Object;
+                console.log(err.toString())
+                setUser(null);
+            };
         };
 
         isAuth();
     }, [auth])
 
     return (
-        <AuthContext.Provider value={{auth, setAuth, user, setUser}}>
+        <AuthContext.Provider value={{auth, setAuth, user, setUser, currentQuiz, setCurrentQuiz}}>
             { children }
         </AuthContext.Provider>
     )

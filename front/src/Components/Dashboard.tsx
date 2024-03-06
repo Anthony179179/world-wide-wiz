@@ -30,6 +30,7 @@ function Dashboard() {
         <>
             <h2>{temp}</h2>
             <Link to={"/"}>Go to Homepage    </Link>
+            <Link to={"/myquizzes"}>My Quizzes    </Link>
             <Button onClick={handleLogout}>Logout</Button>
         </>
     )
