@@ -20,7 +20,12 @@ function Dashboard() {
 
   const [temp, setTemp] = useState<string>("");
   const [quizScores, setQuizScores] = useState<QuizScore[]>([]);
-  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [pregeneratedQuizzes, setPregeneratedQuizzes] = useState<QuizScore[]>(
+    []
+  );
+  const [usergeneratedQuizzes, setUsergeneratedQuizzes] = useState<QuizScore[]>(
+    []
+  );
 
   const navigate = useNavigate();
 
@@ -34,7 +39,24 @@ function Dashboard() {
         let response = await axios.get("/api/quizzes");
 
         if (response.status == 200) {
-          setQuizzes(response.data.quizzes);
+          const pregeneratedQuizzesData: QuizScore[] = response.data.quizzes
+            .filter((quiz: Quiz) => quiz.pregenerated)
+            .map((quiz: Quiz) => ({
+              quizid: quiz.id,
+              name: quiz.name,
+              description: quiz.description,
+              score: null,
+            }));
+          setPregeneratedQuizzes(pregeneratedQuizzesData);
+          const usergeneratedQuizzesData: QuizScore[] = response.data.quizzes
+            .filter((quiz: Quiz) => !quiz.pregenerated)
+            .map((quiz: Quiz) => ({
+              quizid: quiz.id,
+              name: quiz.name,
+              description: quiz.description,
+              score: null,
+            }));
+          setUsergeneratedQuizzes(usergeneratedQuizzesData);
         }
       } catch (error) {
         //TODO: Implement error handling
@@ -76,9 +98,9 @@ function Dashboard() {
     <>
       <NavBar helloText={temp} />
       <h3>Quizzes from us</h3>
-      <QuizzesGallery quizzes={quizzes.filter((quiz) => quiz.pregenerated)} />
+      <QuizzesGallery quizzes={pregeneratedQuizzes} />
       <h3>Quizzes from users</h3>
-      <QuizzesGallery quizzes={quizzes.filter((quiz) => !quiz.pregenerated)} />
+      <QuizzesGallery quizzes={usergeneratedQuizzes} />
       <h3>Quizzes you've taken</h3>
       <QuizzesGallery quizzes={quizScores} />
       {/* <QuizzesGallery quizzes={} /> */}
