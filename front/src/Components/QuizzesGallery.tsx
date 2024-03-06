@@ -5,43 +5,20 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActionArea from "@mui/material/CardActionArea";
 import Typography from "@mui/material/Typography";
+import { QuizScore } from "./utils";
 
-function QuizzesGallery() {
+interface QuizzesGalleryProps {
+  quizzes: QuizScore[];
+}
+function QuizzesGallery({ quizzes }: QuizzesGalleryProps) {
   const [startIndex, setStartIndex] = useState(0);
-  const cards = [
-    {
-      name: "Quiz 1",
-      creator: "web",
-      score: "100",
-    },
-    {
-      name: "Quiz 2",
-      creator: "web",
-      score: "80",
-    },
-    {
-      name: "Quiz 3",
-      creator: "web",
-      score: "90",
-    },
-    {
-      name: "Quiz 4",
-      creator: "user",
-      score: "70",
-    },
-    {
-      name: "Quiz 5",
-      creator: "user",
-      score: "100",
-    },
-  ];
 
   const scrollLeft = () => {
     setStartIndex((prevIndex) => Math.max(prevIndex - 3, 0));
   };
 
   const scrollRight = () => {
-    setStartIndex((prevIndex) => Math.min(prevIndex + 3, cards.length));
+    setStartIndex((prevIndex) => Math.min(prevIndex + 3, quizzes.length));
   };
 
   return (
@@ -54,31 +31,29 @@ function QuizzesGallery() {
         </Grid>
         <Grid item xs={10}>
           <Grid container spacing={2}>
-            {cards
-              .slice(startIndex, startIndex + 3)
-              .map((card, index: number) => (
-                <Grid key={index} item xs={4}>
-                  <Card>
-                    <CardActionArea>
-                      <CardContent>
-                        <Typography variant="h5">{card.name}</Typography>
-                        <Typography variant="body1">
-                          Creator: {card.creator}
-                        </Typography>
-                        <Typography variant="body1">
-                          Score: {card.score}
-                        </Typography>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
-                </Grid>
-              ))}
+            {quizzes.slice(startIndex, startIndex + 3).map((quizzes) => (
+              <Grid key={quizzes.quizid} item xs={4}>
+                <Card>
+                  <CardActionArea>
+                    <CardContent>
+                      <Typography variant="h5">{quizzes.name}</Typography>
+                      <Typography variant="body1">
+                        Description: {quizzes.description}
+                      </Typography>
+                      <Typography variant="body1">
+                        Score: {quizzes.score}
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
         </Grid>
         <Grid item>
           <IconButton
             onClick={scrollRight}
-            disabled={startIndex >= cards.length - 3}
+            disabled={startIndex >= quizzes.length - 3}
           >
             <ArrowForwardIos />
           </IconButton>

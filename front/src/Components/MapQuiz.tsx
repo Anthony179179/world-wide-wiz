@@ -21,10 +21,27 @@ import {
 import { Link } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Layer, LayerEvent } from "leaflet";
+import { AuthContext } from "../authContext";
+
+//needd to change the way to get quizIds
+const quizIds = {
+  europe: 4,
+  americas: 5,
+  asia: 6,
+  europe_flags: 7,
+  americas_flags: 8,
+  asia_flags: 9,
+  africa_flags: 10,
+  oceania_flags: 11,
+  africa: 12,
+  oceania: 13,
+};
 
 function MapQuiz() {
+  const { auth, user } = useContext(AuthContext);
+
   let [countryColors, setCountryColors] = useState<CountryColors>({});
   let [score, setScore] = useState<number>(0);
   let [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -56,6 +73,21 @@ function MapQuiz() {
   useEffect(() => {
     if (countriesArray.length === 0) {
       setDialogOpen(true);
+
+      // if (auth !== null && user !== null) {
+      (async () => {
+        try {
+          await axios.post(`/api/quizscores/`, {
+            username: "khangarook",
+            quizid: quizIds[region],
+          });
+        } catch (error) {
+          //TODO: Implement error handling
+          console.log("ERROR HAS BEEN ENCOUNTERED:");
+          console.log(error);
+        }
+      })();
+      // }
     } else {
       (async () => {
         try {

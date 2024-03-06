@@ -60,7 +60,14 @@ interface CountriesJSONData {
   features: CountryData[];
 }
 
+interface QuizScore {
+  quizid: number;
+  name: string;
+  description: string;
+  score: number | null;
+}
+
 type CountryColors = Record<string, "green" | "red">;
 
 export { shuffle, filterCountriesByRegion, useStableCallback };
-export type { CountryData, CountriesJSONData, CountryColors };
+export type { CountryData, CountriesJSONData, CountryColors, QuizScore };
