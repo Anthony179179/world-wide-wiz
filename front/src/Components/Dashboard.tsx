@@ -7,6 +7,7 @@ import QuizzesCarousel from "./QuizzesCarousel";
 import axios from "axios";
 import { QuizScore } from "./utils";
 import { Link } from "react-router-dom";
+import { quizIds } from "./utils";
 interface Quiz {
   description: string;
   id: number;
@@ -69,22 +70,27 @@ function Dashboard() {
     (async () => {
       try {
         let response = await axios.get(`/api/quizscores/${user}`);
-
+        console.log(response)
         if (response.status == 200) {
           const quizzesData = response.data.quizscores.map(
             ({
               quizid,
+              score,
               quiz: { name, description },
             }: {
               quizid: number;
+              score: number;
               quiz: Quiz;
             }) => ({
               quizid: quizid,
               name: name,
               description: description,
-              score: 0, //TODO: change the score once the score column is added to QuizScore table
+              score: score, 
+              link: Object.values(quizIds).includes(quizid) ? `/quiz/${Object.keys(quizIds).find(key =>
+                quizIds[key] === quizid)}` : `/quiz/${quizid}`
             })
           );
+          console.log(`/quiz/${quizIds[4]}`);
           setQuizScores(quizzesData);
         }
       } catch (error) {

@@ -31,7 +31,7 @@ function QuizzesCarousel({ quizzes }: QuizzesCarouselProps) {
             {quizzes.slice(startIndex, startIndex + 3).map((quizzes) => (
               <Grid key={quizzes.quizid} item xs={4}>
                 <Card sx={{ height: '100%' }}>
-                  <CardActionArea>
+                  <CardActionArea href={quizzes.link}>
                     <CardContent>
                       <Typography variant="h5">{quizzes.name}</Typography>
                       <Box borderBottom={1} mt={1} mb={1} />

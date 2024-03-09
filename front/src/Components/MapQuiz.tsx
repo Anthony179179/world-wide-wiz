@@ -8,6 +8,7 @@ import {
   CountriesJSONData,
   CountryColors,
   CountryData,
+  quizIds
 } from "./utils";
 import axios from "axios";
 import {
@@ -25,19 +26,6 @@ import { useState, useEffect, useContext } from "react";
 import { Layer, LayerEvent } from "leaflet";
 import { AuthContext } from "../authContext";
 
-//needd to change the way to get quizIds
-const quizIds: { [key: string]: number } = {
-  europe: 1,
-  americas: 2,
-  asia: 3,
-  africa: 4,
-  oceania: 5,
-  europe_flags: 6,
-  americas_flags: 7,
-  asia_flags: 8,
-  africa_flags: 9,
-  oceania_flags: 10,
-};
 
 interface MapQuizProps {
   isFlagsQuiz: boolean;
@@ -85,6 +73,7 @@ function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
               await axios.post(`/api/quizscores/`, {
                 username: user,
                 quizid: quizIds[quizIdKey],
+                score: score
               });
             } else {
               console.error(`Quiz ID not found for key: ${quizIdKey}`);

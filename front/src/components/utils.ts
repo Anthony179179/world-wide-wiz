@@ -1,5 +1,18 @@
 import { useCallback, useRef } from "react";
 
+const quizIds: { [key: string]: number } = {
+  europe: 1,
+  americas: 2,
+  asia: 3,
+  africa: 4,
+  oceania: 5,
+  europe_flags: 6,
+  americas_flags: 7,
+  asia_flags: 8,
+  africa_flags: 9,
+  oceania_flags: 10,
+};
+
 function shuffle(array: any) {
   let currentIndex = array.length;
   let randomIndex;
@@ -65,6 +78,7 @@ interface QuizScore {
   name: string;
   description: string;
   score: number | null;
+  link: string;
 }
 
 interface Question {
@@ -84,7 +98,7 @@ interface Quiz {
 
 type CountryColors = Record<string, "green" | "red">;
 
-export { shuffle, filterCountriesByRegion, useStableCallback };
+export { shuffle, filterCountriesByRegion, useStableCallback, quizIds };
 export type {
   CountryData,
   CountriesJSONData,
