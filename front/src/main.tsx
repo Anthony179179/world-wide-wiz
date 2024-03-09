@@ -42,10 +42,6 @@ let router = createBrowserRouter([
         element: <CreateQuiz />,
       },
       {
-        path: "/quiz",
-        element: <MainLayout />,
-      },
-      {
         path: "/quiz/:region",
         element: <MapQuiz isFlagsQuiz={false} />,
       },
