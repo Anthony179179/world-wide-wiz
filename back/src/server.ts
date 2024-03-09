@@ -325,22 +325,25 @@ app.post("/api/signup", async (req, res) => {
 //add a quiz score to a quiz
 app.post("/api/quizscores", async (req, res) => {
   // Zod schema validation
-  const { username, quizid } = req.body;
+  const { username, quizid, score } = req.body;
   let existingQuizScore = await prisma.quizScore.findFirst({
     where: { username: username, quizid: quizid },
   });
   if (existingQuizScore !== null)
     return res.status(400).json({ error: "Score for quiz already exists" });
+
   await prisma.quizScore.create({
     data: {
       username: username,
       quizid: quizid,
+      score: score,
     },
   });
   return res.status(201).json({
     quizscore: {
       username: username,
       quizid: quizid,
+      score: score,
     },
   });
 });
