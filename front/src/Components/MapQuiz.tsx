@@ -8,7 +8,7 @@ import {
   CountriesJSONData,
   CountryColors,
   CountryData,
-  quizIds
+  quizIds,
 } from "./utils";
 import axios from "axios";
 import {
@@ -19,13 +19,14 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 import { useParams } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { Layer, LayerEvent } from "leaflet";
 import { AuthContext } from "../authContext";
 
+const regions = ["americas", "asia", "africa", "europe", "oceania"];
 
 interface MapQuizProps {
   isFlagsQuiz: boolean;
@@ -33,7 +34,7 @@ interface MapQuizProps {
 
 function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
   const { auth, user } = useContext(AuthContext);
-
+  const navigate = useNavigate();
   let [countryColors, setCountryColors] = useState<CountryColors>({});
   let [score, setScore] = useState<number>(0);
   let [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -61,6 +62,12 @@ function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
   );
 
   useEffect(() => {
+    //might need to find a better solution
+    if (!region || (region && !regions.includes(region.toLowerCase()))) {
+      navigate("/notfound");
+      return;
+    }
+
     if (countriesArray.length === 0) {
       setDialogOpen(true);
 
@@ -73,7 +80,7 @@ function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
               await axios.post(`/api/quizscores/`, {
                 username: user,
                 quizid: quizIds[quizIdKey],
-                score: score
+                score: score,
               });
             } else {
               console.error(`Quiz ID not found for key: ${quizIdKey}`);
@@ -103,7 +110,7 @@ function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
         }
       })();
     }
-  }, [countriesArray]);
+  }, []);
 
   let checkAnswer = (event: LayerEvent) => {
     if (countriesArray.length == 0) {
