@@ -3,19 +3,28 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
+import { quizIds } from "./utils";
+import { useNavigate } from "react-router-dom";
 
 interface Quiz {
   id: number;
   name: string;
   description: string;
   pregenerated: boolean;
-  username: string;
+  username: string | null;
+}
+
+interface QuizLink {
+  id: number;
+  name: string;
+  link: string;
 }
 
 function SearchBar() {
   const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState<readonly Quiz[]>([]);
+  const [options, setOptions] = useState<readonly QuizLink[]>([]);
   const loading = open && options.length === 0;
+  const navigate = useNavigate();
 
   useEffect(() => {
     let active = true;
@@ -29,7 +38,18 @@ function SearchBar() {
         let response = await axios.get("/api/quizzes");
 
         if (response.status == 200) {
-          const quizzes = response.data.quizzes;
+          const quizzes: QuizLink[] = response.data.quizzes.map(
+            (quiz: Quiz) => ({
+              id: quiz.id,
+              name: quiz.name,
+              link: Object.values(quizIds).includes(quiz.id)
+                ? `/quiz/${Object.keys(quizIds)
+                    .find((key) => quizIds[key] === quiz.id)
+                    ?.replace("_", "/")}`
+                : `/quiz/${quiz.id}`,
+            })
+          );
+
           if (active) {
             setOptions([...quizzes]);
           }
@@ -62,6 +82,11 @@ function SearchBar() {
       }}
       onClose={() => {
         setOpen(false);
+      }}
+      onChange={(_, option) => {
+        if (option) {
+          navigate(option.link);
+        }
       }}
       isOptionEqualToValue={(option, value) => option.name === value.name}
       getOptionLabel={(option) => option.name}
