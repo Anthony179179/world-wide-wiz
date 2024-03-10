@@ -110,7 +110,7 @@ function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
         }
       })();
     }
-  }, []);
+  }, [countriesArray]);
 
   let checkAnswer = (event: LayerEvent) => {
     if (countriesArray.length == 0) {

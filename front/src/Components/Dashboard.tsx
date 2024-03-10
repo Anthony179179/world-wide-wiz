@@ -16,6 +16,21 @@ interface Quiz {
   username: string | null;
 }
 
+const mapQuizzes = (quizzes: Quiz[], pregenerated: boolean): QuizScore[] =>
+  quizzes
+    .filter((quiz: Quiz) => quiz.pregenerated === pregenerated)
+    .map((quiz: Quiz) => ({
+      quizid: quiz.id,
+      name: quiz.name,
+      description: quiz.description,
+      score: null,
+      link: Object.values(quizIds).includes(quiz.id)
+        ? `/quiz/${Object.keys(quizIds)
+            .find((key) => quizIds[key] === quiz.id)
+            ?.replace("_", "/")}`
+        : `/quiz/${quiz.id}`,
+    }));
+
 function Dashboard() {
   const { auth, user } = useContext(AuthContext);
 
@@ -40,25 +55,8 @@ function Dashboard() {
         let response = await axios.get("/api/quizzes");
 
         if (response.status == 200) {
-          //TODO: make this more efficient
-          const pregeneratedQuizzesData: QuizScore[] = response.data.quizzes
-            .filter((quiz: Quiz) => quiz.pregenerated)
-            .map((quiz: Quiz) => ({
-              quizid: quiz.id,
-              name: quiz.name,
-              description: quiz.description,
-              score: null,
-            }));
-          setPregeneratedQuizzes(pregeneratedQuizzesData);
-          const usergeneratedQuizzesData: QuizScore[] = response.data.quizzes
-            .filter((quiz: Quiz) => !quiz.pregenerated)
-            .map((quiz: Quiz) => ({
-              quizid: quiz.id,
-              name: quiz.name,
-              description: quiz.description,
-              score: null,
-            }));
-          setUsergeneratedQuizzes(usergeneratedQuizzesData);
+          setPregeneratedQuizzes(mapQuizzes(response.data.quizzes, true));
+          setUsergeneratedQuizzes(mapQuizzes(response.data.quizzes, false));
         }
       } catch (error) {
         //TODO: Implement error handling
@@ -70,7 +68,7 @@ function Dashboard() {
     (async () => {
       try {
         let response = await axios.get(`/api/quizscores/${user}`);
-        console.log(response)
+
         if (response.status == 200) {
           const quizzesData = response.data.quizscores.map(
             ({
@@ -85,12 +83,15 @@ function Dashboard() {
               quizid: quizid,
               name: name,
               description: description,
-              score: score, 
-              link: Object.values(quizIds).includes(quizid) ? `/quiz/${Object.keys(quizIds).find(key =>
-                quizIds[key] === quizid)}` : `/quiz/${quizid}`
+              score: score,
+              link: Object.values(quizIds).includes(quizid)
+                ? `/quiz/${Object.keys(quizIds)
+                    .find((key) => quizIds[key] === quizid)
+                    ?.replace("_", "/")}`
+                : `/quiz/${quizid}`,
             })
           );
-          console.log(`/quiz/${quizIds[4]}`);
+
           setQuizScores(quizzesData);
         }
       } catch (error) {
