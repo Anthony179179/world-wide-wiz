@@ -11,13 +11,21 @@ import axios from "axios";
 import NavBar from "./NavBar";
 import { AuthContext } from "../authContext";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import { QuizzesWithScoresLinks } from "./utils";
+import { QuizzesWithScoresLinks, quizIds } from "./utils";
 import QuizzesCarousel from "./QuizzesCarousel";
 
 interface TabPanelProps {
   children?: ReactNode;
   index: number;
   value: number;
+}
+
+interface Quiz {
+  description: string;
+  id: number;
+  name: string;
+  pregenerated: boolean;
+  scores: [{ score: number }] | [];
 }
 
 function CustomTabPanel(props: TabPanelProps) {
@@ -54,6 +62,8 @@ function Profile() {
   const [quizzesWithScores, setQuizzesWithScores] = useState<
     QuizzesWithScoresLinks[]
   >([]);
+  const [allQuizzesWithScoresForUser, setAllQuizzesWithScoresForUser] =
+    useState<QuizzesWithScoresLinks[]>([]);
   const handleChange = (_: SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -101,6 +111,42 @@ function Profile() {
         console.log(error);
       }
     })();
+
+    (async () => {
+      try {
+        let response = await axios.get(`/api/quizscores/${username}`);
+
+        if (response.status == 200) {
+          const allQuizzesWithScoresForUserData = response.data.quizscores.map(
+            ({
+              quizid,
+              score,
+              quiz: { name, description },
+            }: {
+              quizid: number;
+              score: number;
+              quiz: Quiz;
+            }) => ({
+              quizid: quizid,
+              name: name,
+              description: description,
+              score: score,
+              link: Object.values(quizIds).includes(quizid)
+                ? `/quiz/${Object.keys(quizIds)
+                    .find((key) => quizIds[key] === quizid)
+                    ?.replace("_", "/")}`
+                : `/quiz/${quizid}`,
+            })
+          );
+
+          setAllQuizzesWithScoresForUser(allQuizzesWithScoresForUserData);
+        }
+      } catch (error) {
+        //TODO: Implement error handling
+        console.log("ERROR HAS BEEN ENCOUNTERED:");
+        console.log(error);
+      }
+    })();
   }, []);
 
   return (
@@ -128,7 +174,7 @@ function Profile() {
           <QuizzesCarousel quizzes={quizzesWithScores} />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          Quiz 2
+          <QuizzesCarousel quizzes={allQuizzesWithScoresForUser} />
         </CustomTabPanel>
       </Box>
     </>
