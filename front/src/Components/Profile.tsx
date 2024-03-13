@@ -59,8 +59,7 @@ function Profile() {
   };
   const navigate = useNavigate();
   useEffect(() => {
-    // auth ? setHelloText(`Hello, ${user}!`) : navigate("/dashboard");
-    setHelloText(`Hello, ${user}!`);
+    auth ? setHelloText(`Hello, ${user}!`) : navigate("/dashboard");
   }, [auth]);
 
   const { username } = useParams(); //username of the user being searched

@@ -110,6 +110,34 @@ app.get(
   }
 );
 
+// get all quizzes and quiz scores from player (if available)
+app.get("/api/quizzes/quizscores/:playerUsername", async (req, res) => {
+  const { playerUsername } = req.params;
+
+  try {
+    const quizzesWithScores = await prisma.quiz.findMany({
+      select: {
+        scores: {
+          where: {
+            username: playerUsername,
+          },
+          select: {
+            score: true,
+          },
+        },
+        id: true,
+        name: true,
+        description: true,
+        pregenerated: true,
+      },
+    });
+    return res.status(200).json({ quizzes: quizzesWithScores });
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
+});
+
 // get all quizzes
 app.get("/api/quizzes", async (req, res) => {
   try {

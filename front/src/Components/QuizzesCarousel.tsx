@@ -1,11 +1,17 @@
 import { useState } from "react";
 import { Grid, IconButton, Container } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
-import { Card, CardContent, CardActionArea, Typography, Box } from "@mui/material"
-import { QuizScore } from "./utils";
+import {
+  Card,
+  CardContent,
+  CardActionArea,
+  Typography,
+  Box,
+} from "@mui/material";
+import { QuizzesWithScoresLinks } from "./utils";
 
 interface QuizzesCarouselProps {
-  quizzes: QuizScore[];
+  quizzes: QuizzesWithScoresLinks[];
 }
 function QuizzesCarousel({ quizzes }: QuizzesCarouselProps) {
   const [startIndex, setStartIndex] = useState(0);
@@ -30,7 +36,7 @@ function QuizzesCarousel({ quizzes }: QuizzesCarouselProps) {
           <Grid container spacing={2}>
             {quizzes.slice(startIndex, startIndex + 3).map((quizzes) => (
               <Grid key={quizzes.quizid} item xs={4}>
-                <Card sx={{ height: '100%' }}>
+                <Card sx={{ height: "100%" }}>
                   <CardActionArea href={quizzes.link}>
                     <CardContent>
                       <Typography variant="h5">{quizzes.name}</Typography>
@@ -39,7 +45,7 @@ function QuizzesCarousel({ quizzes }: QuizzesCarouselProps) {
                         Description: {quizzes.description}
                       </Typography>
                       <Typography variant="body1">
-                        Score: {quizzes.score}
+                        Your Score: {quizzes.score}
                       </Typography>
                     </CardContent>
                   </CardActionArea>

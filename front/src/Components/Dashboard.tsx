@@ -13,7 +13,7 @@ interface Quiz {
   id: number;
   name: string;
   pregenerated: boolean;
-  username: string | null;
+  scores: [{ score: number }] | [];
 }
 
 const mapQuizzes = (
@@ -26,7 +26,7 @@ const mapQuizzes = (
       quizid: quiz.id,
       name: quiz.name,
       description: quiz.description,
-      score: null,
+      score: quiz.scores.length !== 0 ? quiz.scores[0].score : "Not Taken",
       link: Object.values(quizIds).includes(quiz.id)
         ? `/quiz/${Object.keys(quizIds)
             .find((key) => quizIds[key] === quiz.id)
@@ -55,7 +55,7 @@ function Dashboard() {
   useEffect(() => {
     (async () => {
       try {
-        let response = await axios.get("/api/quizzes");
+        let response = await axios.get(`/api/quizzes/quizscores/${user}`);
 
         if (response.status == 200) {
           setPregeneratedQuizzes(mapQuizzes(response.data.quizzes, true));

@@ -77,7 +77,7 @@ interface QuizzesWithScoresLinks {
   quizid: number;
   name: string;
   description: string;
-  score: number | null;
+  score: number | string;
   link: string;
 }
 
