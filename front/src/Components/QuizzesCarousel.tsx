@@ -9,6 +9,7 @@ import {
   Box,
 } from "@mui/material";
 import { QuizzesWithScoresLinks } from "./utils";
+import { useNavigate } from "react-router-dom";
 
 interface QuizzesCarouselProps {
   quizzes: QuizzesWithScoresLinks[];
@@ -16,7 +17,7 @@ interface QuizzesCarouselProps {
 }
 function QuizzesCarousel({ quizzes, user }: QuizzesCarouselProps) {
   const [startIndex, setStartIndex] = useState(0);
-
+  const navigate = useNavigate();
   const scrollLeft = () => {
     setStartIndex((prevIndex) => Math.max(prevIndex - 4, 0));
   };
@@ -38,7 +39,7 @@ function QuizzesCarousel({ quizzes, user }: QuizzesCarouselProps) {
             {quizzes.slice(startIndex, startIndex + 4).map((quizzes) => (
               <Grid key={quizzes.quizid} item xs={3}>
                 <Card sx={{ height: "100%" }}>
-                  <CardActionArea href={quizzes.link}>
+                  <CardActionArea onClick={() => navigate(quizzes.link)}>
                     <CardContent>
                       <Typography variant="h5">{quizzes.name}</Typography>
                       <Box borderBottom={1} mt={1} mb={1} />

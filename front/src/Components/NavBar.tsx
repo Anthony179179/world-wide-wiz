@@ -90,10 +90,6 @@ function NavBar({ helloText }: NavBarProps) {
     }
   }
 
-  function goToDashboard() {
-    navigate("/dashboard");
-  }
-
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -101,7 +97,7 @@ function NavBar({ helloText }: NavBarProps) {
           <MapIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
             variant="h6"
-            onClick={goToDashboard}
+            onClick={() => navigate("/dashboard")}
             noWrap
             component="div"
             sx={{ display: { xs: "none", sm: "block" }, cursor: "pointer" }}
