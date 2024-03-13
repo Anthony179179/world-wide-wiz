@@ -45,6 +45,7 @@ model QuizScore {
   quiz      Quiz    @relation(fields: [quizid], references: [id])
   quizid    Int
   score     Int
+  maxscore  Int
 }
 
 model Question {
