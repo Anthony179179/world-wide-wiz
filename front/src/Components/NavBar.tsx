@@ -104,7 +104,7 @@ function NavBar({ helloText }: NavBarProps) {
             onClick={goToDashboard}
             noWrap
             component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
+            sx={{ display: { xs: "none", sm: "block" }, cursor: "pointer" }}
           >
             World Wide Wiz
           </Typography>
