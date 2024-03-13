@@ -77,13 +77,23 @@ function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
           const quizIdKey = isFlagsQuiz ? `${region}_flags` : region;
           try {
             if (quizIdKey) {
-              await axios.post(`/api/quizscores/`, {
+              const response = await axios.post(`/api/quizscores/`, {
                 username: user,
                 quizid: quizIds[quizIdKey],
                 score: score,
               });
-            } else {
-              console.error(`Quiz ID not found for key: ${quizIdKey}`);
+
+              if (
+                response.status != 201 &&
+                response.data.error === "Score for quiz already exists"
+              ) {
+                //might need to display feedback if score is successfully created/updated
+                await axios.put(`/api/quizscores/`, {
+                  username: user,
+                  quizid: quizIds[quizIdKey],
+                  score: score,
+                });
+              }
             }
           } catch (error) {
             //TODO: Implement error handling

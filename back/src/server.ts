@@ -403,26 +403,34 @@ app.post("/api/signup", async (req, res) => {
 app.post("/api/quizscores", async (req, res) => {
   // Zod schema validation
   const { username, quizid, score } = req.body;
-  let existingQuizScore = await prisma.quizScore.findFirst({
-    where: { username: username, quizid: quizid },
-  });
-  if (existingQuizScore !== null)
-    return res.status(400).json({ error: "Score for quiz already exists" });
 
-  await prisma.quizScore.create({
-    data: {
-      username: username,
-      quizid: quizid,
-      score: score,
-    },
-  });
-  return res.status(201).json({
-    quizscore: {
-      username: username,
-      quizid: quizid,
-      score: score,
-    },
-  });
+  try {
+    let existingQuizScore = await prisma.quizScore.findFirst({
+      where: { username: username, quizid: quizid },
+    });
+
+    if (existingQuizScore !== null)
+      return res.status(400).json({ error: "Score for quiz already exists" });
+
+    await prisma.quizScore.create({
+      data: {
+        username: username,
+        quizid: quizid,
+        score: score,
+      },
+    });
+
+    return res.status(201).json({
+      quizscore: {
+        username: username,
+        quizid: quizid,
+        score: score,
+      },
+    });
+  } catch (err) {
+    const error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
 });
 
 //add a score to a quiz question
@@ -498,9 +506,40 @@ app.put("api/users", async (req, res) => {
   return res.json();
 });
 
-// edit a quiz score to a user's quiz
+// edit a quiz score
 app.put("/api/quizscores", async (req, res) => {
-  return res.json();
+  const { username, quizid, score } = req.body;
+
+  try {
+    let existingQuizScore = await prisma.quizScore.findFirst({
+      where: { username: username, quizid: quizid },
+    });
+
+    if (existingQuizScore === null)
+      return res.status(400).json({ error: "Score for quiz does not exist" });
+
+    await prisma.quizScore.update({
+      where: {
+        id: existingQuizScore.id,
+        username: username,
+        quizid: quizid,
+      },
+      data: {
+        score,
+      },
+    });
+
+    return res.status(200).json({
+      quizscore: {
+        username: username,
+        quizid: quizid,
+        score: score,
+      },
+    });
+  } catch (err) {
+    const error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
 });
 
 // edit a score to a quiz question
