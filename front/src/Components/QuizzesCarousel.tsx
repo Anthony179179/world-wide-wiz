@@ -18,15 +18,15 @@ function QuizzesCarousel({ quizzes, user }: QuizzesCarouselProps) {
   const [startIndex, setStartIndex] = useState(0);
 
   const scrollLeft = () => {
-    setStartIndex((prevIndex) => Math.max(prevIndex - 3, 0));
+    setStartIndex((prevIndex) => Math.max(prevIndex - 4, 0));
   };
 
   const scrollRight = () => {
-    setStartIndex((prevIndex) => Math.min(prevIndex + 3, quizzes.length));
+    setStartIndex((prevIndex) => Math.min(prevIndex + 4, quizzes.length));
   };
 
   return (
-    <Container maxWidth="lg" sx={{ margin: 0 }}>
+    <Container maxWidth="xl" sx={{ margin: 0 }}>
       <Grid container spacing={2} alignItems="flex-start">
         <Grid item>
           <IconButton onClick={scrollLeft} disabled={startIndex === 0}>
@@ -35,8 +35,8 @@ function QuizzesCarousel({ quizzes, user }: QuizzesCarouselProps) {
         </Grid>
         <Grid item xs={10}>
           <Grid container spacing={2}>
-            {quizzes.slice(startIndex, startIndex + 3).map((quizzes) => (
-              <Grid key={quizzes.quizid} item xs={4}>
+            {quizzes.slice(startIndex, startIndex + 4).map((quizzes) => (
+              <Grid key={quizzes.quizid} item xs={3}>
                 <Card sx={{ height: "100%" }}>
                   <CardActionArea href={quizzes.link}>
                     <CardContent>
@@ -58,7 +58,7 @@ function QuizzesCarousel({ quizzes, user }: QuizzesCarouselProps) {
         <Grid item>
           <IconButton
             onClick={scrollRight}
-            disabled={startIndex >= quizzes.length - 3}
+            disabled={startIndex >= quizzes.length - 4}
           >
             <ArrowForwardIos />
           </IconButton>

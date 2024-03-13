@@ -7,6 +7,7 @@ import axios from "axios";
 import { QuizzesWithScoresLinks } from "./utils";
 import { Link } from "react-router-dom";
 import { quizIds } from "./utils";
+import { Box } from "@mui/material";
 interface Quiz {
   description: string;
   id: number;
@@ -110,22 +111,28 @@ function Dashboard() {
       <Link to="/myquizzes"></Link>
       {pregeneratedQuizzes.length != 0 && (
         <>
-          <h3>Quizzes from us</h3>
-          <QuizzesCarousel quizzes={pregeneratedQuizzes} />
+          <h2>Quizzes from us</h2>
+          <Box sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+            <QuizzesCarousel quizzes={pregeneratedQuizzes} />
+          </Box>
         </>
       )}
 
       {usergeneratedQuizzes.length != 0 && (
-        <>
-          <h3>Quizzes from users</h3>
+      <>
+        <h2>Quizzes from users</h2>
+        <Box sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
           <QuizzesCarousel quizzes={usergeneratedQuizzes} />
-        </>
+        </Box>
+      </>
       )}
 
       {quizScores.length != 0 && (
         <>
-          <h3>Quizzes you've taken</h3>
-          <QuizzesCarousel quizzes={quizScores} />
+          <h2>Quiz History</h2>
+          <Box sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+            <QuizzesCarousel quizzes={quizScores} />
+          </Box>
         </>
       )}
     </>
