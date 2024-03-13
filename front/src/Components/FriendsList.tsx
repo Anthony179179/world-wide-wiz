@@ -6,7 +6,7 @@ import {
   ListItemText,
   ListSubheader,
 } from "@mui/material";
-
+import ProfilesSearchBar from "./ProfilesSearchBar";
 import { Person } from "@mui/icons-material";
 
 const friends = [
@@ -23,6 +23,7 @@ function FriendsList() {
   return (
     <List sx={{ width: "300px" }}>
       <ListSubheader>Following</ListSubheader>
+      <ProfilesSearchBar></ProfilesSearchBar>
       {friends.map((friend) => (
         <ListItemButton
           key={friend.id}

@@ -5,7 +5,7 @@ import NavBar from "./NavBar";
 import FriendsList from "./FriendsList";
 import QuizzesCarousel from "./QuizzesCarousel";
 import axios from "axios";
-import { QuizScore } from "./utils";
+import { QuizzesWithScoresLinks } from "./utils";
 import { Link } from "react-router-dom";
 import { quizIds } from "./utils";
 interface Quiz {
@@ -16,7 +16,10 @@ interface Quiz {
   username: string | null;
 }
 
-const mapQuizzes = (quizzes: Quiz[], pregenerated: boolean): QuizScore[] =>
+const mapQuizzes = (
+  quizzes: Quiz[],
+  pregenerated: boolean
+): QuizzesWithScoresLinks[] =>
   quizzes
     .filter((quiz: Quiz) => quiz.pregenerated === pregenerated)
     .map((quiz: Quiz) => ({
@@ -35,13 +38,13 @@ function Dashboard() {
   const { auth, user } = useContext(AuthContext);
 
   const [helloText, setHelloText] = useState<string>("");
-  const [quizScores, setQuizScores] = useState<QuizScore[]>([]);
-  const [pregeneratedQuizzes, setPregeneratedQuizzes] = useState<QuizScore[]>(
-    []
-  );
-  const [usergeneratedQuizzes, setUsergeneratedQuizzes] = useState<QuizScore[]>(
-    []
-  );
+  const [quizScores, setQuizScores] = useState<QuizzesWithScoresLinks[]>([]);
+  const [pregeneratedQuizzes, setPregeneratedQuizzes] = useState<
+    QuizzesWithScoresLinks[]
+  >([]);
+  const [usergeneratedQuizzes, setUsergeneratedQuizzes] = useState<
+    QuizzesWithScoresLinks[]
+  >([]);
 
   const navigate = useNavigate();
 

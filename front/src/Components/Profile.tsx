@@ -6,11 +6,13 @@ import {
   SyntheticEvent,
 } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Tabs, Tab, Typography, Box, IconButton } from "@mui/material";
+import { Tabs, Tab, Typography, Box } from "@mui/material";
 import axios from "axios";
 import NavBar from "./NavBar";
 import { AuthContext } from "../authContext";
 import AccountCircle from "@mui/icons-material/AccountCircle";
+import { QuizzesWithScoresLinks } from "./utils";
+import QuizzesCarousel from "./QuizzesCarousel";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -49,7 +51,9 @@ function Profile() {
   const [value, setValue] = useState(0);
   const { auth, user } = useContext(AuthContext);
   const [helloText, setHelloText] = useState<string>("");
-
+  const [quizzesWithScores, setQuizzesWithScores] = useState<
+    QuizzesWithScoresLinks[]
+  >([]);
   const handleChange = (_: SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -64,10 +68,33 @@ function Profile() {
   useEffect(() => {
     (async () => {
       try {
-        let response = await axios.get(`/api/quizzes/${username}`); //may need to change if added drafted quizzes
+        let response = await axios.get(
+          `/api/quizzes/${username}/quizscores/${user}`
+        ); //may need to change if added drafted quizzes
 
         if (response.status == 200) {
           console.log(response.data);
+          const quizzesWithScoresData: QuizzesWithScoresLinks[] =
+            response.data.quizzes.map(
+              ({
+                id,
+                description,
+                name,
+                scores,
+              }: {
+                id: number;
+                description: string;
+                name: string;
+                scores: [{ score: number }] | [];
+              }) => ({
+                quizid: id,
+                name: name,
+                description: description,
+                score: scores.length !== 0 ? scores[0].score : "Not Taken",
+                link: `/quiz/${id}`,
+              })
+            );
+          setQuizzesWithScores(quizzesWithScoresData);
         }
       } catch (error) {
         //TODO: Implement error handling
@@ -99,7 +126,7 @@ function Profile() {
           </Tabs>
         </Box>
         <CustomTabPanel value={value} index={0}>
-          Quiz 1
+          <QuizzesCarousel quizzes={quizzesWithScores} />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
           Quiz 2

@@ -73,7 +73,7 @@ interface CountriesJSONData {
   features: CountryData[];
 }
 
-interface QuizScore {
+interface QuizzesWithScoresLinks {
   quizid: number;
   name: string;
   description: string;
@@ -105,5 +105,5 @@ export type {
   Quiz,
   Question,
   CountryColors,
-  QuizScore,
+  QuizzesWithScoresLinks,
 };

@@ -48,6 +48,22 @@ app.listen(port, host, () => {
 // GET REQUESTS
 //
 
+// get all users by username
+app.get("/api/users", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        username: true,
+      },
+    });
+    return res.status(200).json({ users: users });
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
+});
+
 // get user by username
 app.get("/api/users/:username", async (req, res) => {
   try {
@@ -60,6 +76,39 @@ app.get("/api/users/:username", async (req, res) => {
     return res.status(400).json({ error: error.toString() });
   }
 });
+
+// get all quizzes created by a user with the scores from a player
+app.get(
+  "/api/quizzes/:username/quizscores/:playerUsername",
+  async (req, res) => {
+    const { username, playerUsername } = req.params;
+
+    try {
+      const quizzesWithScores = await prisma.quiz.findMany({
+        where: {
+          username: username,
+        },
+        select: {
+          scores: {
+            where: {
+              username: playerUsername,
+            },
+            select: {
+              score: true,
+            },
+          },
+          id: true,
+          name: true,
+          description: true,
+        },
+      });
+      return res.status(200).json({ quizzes: quizzesWithScores });
+    } catch (err) {
+      let error = err as Object;
+      return res.status(400).json({ error: error.toString() });
+    }
+  }
+);
 
 // get all quizzes
 app.get("/api/quizzes", async (req, res) => {
