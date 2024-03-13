@@ -11,6 +11,7 @@ import MainLayout from "./MainLayout.tsx";
 import CreateQuiz from "./Components/CreateQuiz.tsx";
 import MyQuizzes from "./Components/MyQuizzes.tsx";
 import MapQuiz from "./Components/MapQuiz.tsx";
+import TakeQuiz from "./Components/TakeQuiz.tsx";
 
 let router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ let router = createBrowserRouter([
       {
         path: "/createquiz",
         element: <CreateQuiz />,
+      },
+      {
+        path: "/takequiz/:quizID",
+        element: <TakeQuiz />,
       },
       {
         path: "/quiz",

@@ -54,8 +54,7 @@ function CreateQuiz() {
 
     // Add styling and drag and drop functionality with react-beautiful-dnd
     // Upload image functionality to associate with a specific question
-    // Edit Question Button
-    // 
+    // Edit Question Button --> Maybe add same layout with inputs for questions???
 
     return (
         <div className="container">
