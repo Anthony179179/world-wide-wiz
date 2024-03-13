@@ -2,7 +2,6 @@ import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../authContext";
 import NavBar from "./NavBar";
-import FriendsList from "./FriendsList";
 import QuizzesCarousel from "./QuizzesCarousel";
 import axios from "axios";
 import { QuizzesWithScoresLinks } from "./utils";
@@ -129,8 +128,6 @@ function Dashboard() {
           <QuizzesCarousel quizzes={quizScores} />
         </>
       )}
-
-      <FriendsList />
     </>
   );
 }
