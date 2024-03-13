@@ -325,7 +325,7 @@ app.post("/api/signup", async (req, res) => {
 //add a quiz score to a quiz
 app.post("/api/quizscores", async (req, res) => {
   // Zod schema validation
-  const { username, quizid, score } = req.body;
+  const { username, quizid, score, maxscore } = req.body;
   let existingQuizScore = await prisma.quizScore.findFirst({
     where: { username: username, quizid: quizid },
   });
@@ -337,6 +337,7 @@ app.post("/api/quizscores", async (req, res) => {
       username: username,
       quizid: quizid,
       score: score,
+      maxscore: maxscore
     },
   });
   return res.status(201).json({
@@ -344,6 +345,7 @@ app.post("/api/quizscores", async (req, res) => {
       username: username,
       quizid: quizid,
       score: score,
+      maxscore: maxscore
     },
   });
 });
