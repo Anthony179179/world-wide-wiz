@@ -31,7 +31,7 @@ const mapQuizzes = (
         ? `/quiz/${Object.keys(quizIds)
             .find((key) => quizIds[key] === quiz.id)
             ?.replace("_", "/")}`
-        : `/quiz/${quiz.id}`,
+        : `/takequiz/${quiz.id}`,
     }));
 
 function Dashboard() {
@@ -91,7 +91,7 @@ function Dashboard() {
                 ? `/quiz/${Object.keys(quizIds)
                     .find((key) => quizIds[key] === quizid)
                     ?.replace("_", "/")}`
-                : `/quiz/${quizid}`,
+                : `/takequiz/${quizid}`,
             })
           );
 

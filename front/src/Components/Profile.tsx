@@ -100,7 +100,7 @@ function Profile() {
                 name: name,
                 description: description,
                 score: scores.length !== 0 ? scores[0].score : "Not Taken",
-                link: `/quiz/${id}`,
+                link: `/takequiz/${id}`,
               })
             );
           setQuizzesWithScores(quizzesWithScoresData);
@@ -135,7 +135,7 @@ function Profile() {
                 ? `/quiz/${Object.keys(quizIds)
                     .find((key) => quizIds[key] === quizid)
                     ?.replace("_", "/")}`
-                : `/quiz/${quizid}`,
+                : `/takequiz/${quizid}`,
             })
           );
 

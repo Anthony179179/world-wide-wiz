@@ -46,7 +46,7 @@ function SearchBar() {
                 ? `/quiz/${Object.keys(quizIds)
                     .find((key) => quizIds[key] === quiz.id)
                     ?.replace("_", "/")}`
-                : `/quiz/${quiz.id}`,
+                : `/takequiz/${quiz.id}`,
             })
           );
 
