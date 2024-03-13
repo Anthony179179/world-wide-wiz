@@ -6,7 +6,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MapIcon from "@mui/icons-material/Map";
 import SearchBar from "./SearchBar";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   AppBar,
@@ -132,6 +132,7 @@ function NavBar({ helloText }: NavBarProps) {
               <AccountCircle />
             </IconButton>
           </Box>
+          <Link to="/myquizzes">My Quizzes</Link>
         </Toolbar>
       </AppBar>
       <Menu

@@ -195,6 +195,20 @@ app.get("/api/quizscores/:username/:quizID", async (req, res) => {
   }
 });
 
+app.get("/api/quizscores/:quizID", async (req, res) => {
+  try {
+    const quizscore = await prisma.quizScore.findMany({
+      where: {
+        quizid: parseInt(req.params.quizID),
+      },
+    });
+    return res.status(200).json({ quizscore: quizscore });
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
+});
+
 // get a user's score on a quiz question
 app.get("/api/questionscores/:username/:questionID", async (req, res) => {
   try {
@@ -402,7 +416,7 @@ app.post("/api/signup", async (req, res) => {
 //add a quiz score to a quiz
 app.post("/api/quizscores", async (req, res) => {
   // Zod schema validation
-  const { username, quizid, score } = req.body;
+  const { username, quizid, score, maxscore } = req.body;
 
   try {
     let existingQuizScore = await prisma.quizScore.findFirst({
@@ -417,6 +431,7 @@ app.post("/api/quizscores", async (req, res) => {
         username: username,
         quizid: quizid,
         score: score,
+        maxscore: maxscore,
       },
     });
 
@@ -425,6 +440,7 @@ app.post("/api/quizscores", async (req, res) => {
         username: username,
         quizid: quizid,
         score: score,
+        maxscore: maxscore,
       },
     });
   } catch (err) {

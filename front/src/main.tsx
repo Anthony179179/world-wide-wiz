@@ -12,6 +12,7 @@ import MyQuizzes from "./Components/MyQuizzes.tsx";
 import MapQuiz from "./Components/MapQuiz.tsx";
 import NotFound from "./Components/NotFound.tsx";
 import Profile from "./Components/Profile.tsx";
+import TakeQuiz from "./Components/TakeQuiz.tsx";
 
 let router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ let router = createBrowserRouter([
       {
         path: "/createquiz",
         element: <CreateQuiz />,
+      },
+      {
+        path: "/takequiz/:quizID",
+        element: <TakeQuiz />,
       },
       {
         path: "/quiz/:region",
