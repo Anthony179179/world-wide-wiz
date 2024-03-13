@@ -34,7 +34,7 @@ const mapQuizzes = (quizzes: Quiz[], pregenerated: boolean): QuizScore[] =>
 function Dashboard() {
   const { auth, user } = useContext(AuthContext);
 
-  const [temp, setTemp] = useState<string>("");
+  const [helloText, setHelloText] = useState<string>("");
   const [quizScores, setQuizScores] = useState<QuizScore[]>([]);
   const [pregeneratedQuizzes, setPregeneratedQuizzes] = useState<QuizScore[]>(
     []
@@ -46,7 +46,7 @@ function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    auth ? setTemp(`Hello, ${user}!`) : navigate("/");
+    auth ? setHelloText(`Hello, ${user}!`) : navigate("/");
   }, [auth]);
 
   useEffect(() => {
@@ -104,7 +104,7 @@ function Dashboard() {
 
   return (
     <>
-      <NavBar helloText={temp} />
+      <NavBar helloText={helloText} />
       <Link to="/myquizzes"></Link>
       {pregeneratedQuizzes.length != 0 && (
         <>

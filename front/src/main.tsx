@@ -11,6 +11,7 @@ import CreateQuiz from "./Components/CreateQuiz.tsx";
 import MyQuizzes from "./Components/MyQuizzes.tsx";
 import MapQuiz from "./Components/MapQuiz.tsx";
 import NotFound from "./Components/NotFound.tsx";
+import Profile from "./Components/Profile.tsx";
 
 let router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ let router = createBrowserRouter([
       {
         path: "/quiz/:region/flags",
         element: <MapQuiz isFlagsQuiz={true} />,
+      },
+      {
+        path: "/profile/:username",
+        element: <Profile />,
       },
       {
         path: "*",
