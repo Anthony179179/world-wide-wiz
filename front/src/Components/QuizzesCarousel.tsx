@@ -12,8 +12,9 @@ import { QuizzesWithScoresLinks } from "./utils";
 
 interface QuizzesCarouselProps {
   quizzes: QuizzesWithScoresLinks[];
+  user?: string;
 }
-function QuizzesCarousel({ quizzes }: QuizzesCarouselProps) {
+function QuizzesCarousel({ quizzes, user }: QuizzesCarouselProps) {
   const [startIndex, setStartIndex] = useState(0);
 
   const scrollLeft = () => {
@@ -45,7 +46,7 @@ function QuizzesCarousel({ quizzes }: QuizzesCarouselProps) {
                         Description: {quizzes.description}
                       </Typography>
                       <Typography variant="body1">
-                        Your Score: {quizzes.score}
+                        {user ? `${user}'s` : "Your"} score: {quizzes.score}
                       </Typography>
                     </CardContent>
                   </CardActionArea>

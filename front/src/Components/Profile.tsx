@@ -174,7 +174,10 @@ function Profile() {
           <QuizzesCarousel quizzes={quizzesWithScores} />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          <QuizzesCarousel quizzes={allQuizzesWithScoresForUser} />
+          <QuizzesCarousel
+            quizzes={allQuizzesWithScoresForUser}
+            user={username}
+          />
         </CustomTabPanel>
       </Box>
     </>
