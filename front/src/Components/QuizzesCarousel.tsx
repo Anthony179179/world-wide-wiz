@@ -1,16 +1,20 @@
 import { useState } from "react";
 import { Grid, IconButton, Container } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardActionArea from "@mui/material/CardActionArea";
-import Typography from "@mui/material/Typography";
-import { QuizScore } from "./utils";
+import {
+  Card,
+  CardContent,
+  CardActionArea,
+  Typography,
+  Box,
+} from "@mui/material";
+import { QuizzesWithScoresLinks } from "./utils";
 
 interface QuizzesCarouselProps {
-  quizzes: QuizScore[];
+  quizzes: QuizzesWithScoresLinks[];
+  user?: string;
 }
-function QuizzesCarousel({ quizzes }: QuizzesCarouselProps) {
+function QuizzesCarousel({ quizzes, user }: QuizzesCarouselProps) {
   const [startIndex, setStartIndex] = useState(0);
 
   const scrollLeft = () => {
@@ -33,15 +37,16 @@ function QuizzesCarousel({ quizzes }: QuizzesCarouselProps) {
           <Grid container spacing={2}>
             {quizzes.slice(startIndex, startIndex + 3).map((quizzes) => (
               <Grid key={quizzes.quizid} item xs={4}>
-                <Card>
-                  <CardActionArea>
+                <Card sx={{ height: "100%" }}>
+                  <CardActionArea href={quizzes.link}>
                     <CardContent>
                       <Typography variant="h5">{quizzes.name}</Typography>
+                      <Box borderBottom={1} mt={1} mb={1} />
                       <Typography variant="body1">
                         Description: {quizzes.description}
                       </Typography>
                       <Typography variant="body1">
-                        Score: {quizzes.score}
+                        {user ? `${user}'s` : "Your"} score: {quizzes.score}
                       </Typography>
                     </CardContent>
                   </CardActionArea>

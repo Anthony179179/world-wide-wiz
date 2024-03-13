@@ -48,6 +48,22 @@ app.listen(port, host, () => {
 // GET REQUESTS
 //
 
+// get all users by username
+app.get("/api/users", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        username: true,
+      },
+    });
+    return res.status(200).json({ users: users });
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
+});
+
 // get user by username
 app.get("/api/users/:username", async (req, res) => {
   try {
@@ -55,6 +71,67 @@ app.get("/api/users/:username", async (req, res) => {
       where: { username: req.params.username },
     });
     return res.status(200).json({ user: user });
+  } catch (err) {
+    let error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
+});
+
+// get all quizzes created by a user with the scores from a player
+app.get(
+  "/api/quizzes/:username/quizscores/:playerUsername",
+  async (req, res) => {
+    const { username, playerUsername } = req.params;
+
+    try {
+      const quizzesWithScores = await prisma.quiz.findMany({
+        where: {
+          username: username,
+        },
+        select: {
+          scores: {
+            where: {
+              username: playerUsername,
+            },
+            select: {
+              score: true,
+            },
+          },
+          id: true,
+          name: true,
+          description: true,
+        },
+      });
+      return res.status(200).json({ quizzes: quizzesWithScores });
+    } catch (err) {
+      let error = err as Object;
+      return res.status(400).json({ error: error.toString() });
+    }
+  }
+);
+
+// get all quizzes and quiz scores from player (if available)
+app.get("/api/quizzes/quizscores/:playerUsername", async (req, res) => {
+  const { playerUsername } = req.params;
+
+  try {
+    const quizzesWithScores = await prisma.quiz.findMany({
+      select: {
+        scores: {
+          where: {
+            username: playerUsername,
+          },
+          select: {
+            score: true,
+          },
+        },
+        id: true,
+        name: true,
+        description: true,
+        pregenerated: true,
+      },
+    });
+    return res.status(200).json({ quizzes: quizzesWithScores });
   } catch (err) {
     let error = err as Object;
     return res.status(400).json({ error: error.toString() });
@@ -340,27 +417,36 @@ app.post("/api/signup", async (req, res) => {
 app.post("/api/quizscores", async (req, res) => {
   // Zod schema validation
   const { username, quizid, score, maxscore } = req.body;
-  // let existingQuizScore = await prisma.quizScore.findFirst({
-  //   where: { username: username, quizid: quizid },
-  // });
-  // if (existingQuizScore !== null)
-  //   return res.status(400).json({ error: "Score for quiz already exists" });
-  await prisma.quizScore.create({
-    data: {
-      quizid: quizid,
-      score: score,
-      username: username,
-      maxscore: maxscore
-    },
-  });
-  return res.status(201).json({
-    quizscore: {
-      username: username,
-      quizid: quizid,
-      score: score,
-      maxscore: maxscore
-    },
-  });
+
+  try {
+    let existingQuizScore = await prisma.quizScore.findFirst({
+      where: { username: username, quizid: quizid },
+    });
+
+    if (existingQuizScore !== null)
+      return res.status(400).json({ error: "Score for quiz already exists" });
+
+    await prisma.quizScore.create({
+      data: {
+        username: username,
+        quizid: quizid,
+        score: score,
+        maxscore: maxscore,
+      },
+    });
+
+    return res.status(201).json({
+      quizscore: {
+        username: username,
+        quizid: quizid,
+        score: score,
+        maxscore: maxscore,
+      },
+    });
+  } catch (err) {
+    const error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
 });
 
 //add a score to a quiz question
@@ -436,9 +522,40 @@ app.put("api/users", async (req, res) => {
   return res.json();
 });
 
-// edit a quiz score to a user's quiz
+// edit a quiz score
 app.put("/api/quizscores", async (req, res) => {
-  return res.json();
+  const { username, quizid, score } = req.body;
+
+  try {
+    let existingQuizScore = await prisma.quizScore.findFirst({
+      where: { username: username, quizid: quizid },
+    });
+
+    if (existingQuizScore === null)
+      return res.status(400).json({ error: "Score for quiz does not exist" });
+
+    await prisma.quizScore.update({
+      where: {
+        id: existingQuizScore.id,
+        username: username,
+        quizid: quizid,
+      },
+      data: {
+        score,
+      },
+    });
+
+    return res.status(200).json({
+      quizscore: {
+        username: username,
+        quizid: quizid,
+        score: score,
+      },
+    });
+  } catch (err) {
+    const error = err as Object;
+    return res.status(400).json({ error: error.toString() });
+  }
 });
 
 // edit a score to a quiz question

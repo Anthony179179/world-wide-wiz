@@ -5,59 +5,61 @@ import NavBar from "./NavBar";
 import FriendsList from "./FriendsList";
 import QuizzesCarousel from "./QuizzesCarousel";
 import axios from "axios";
-import { QuizScore } from "./utils";
+import { QuizzesWithScoresLinks } from "./utils";
 import { Link } from "react-router-dom";
+import { quizIds } from "./utils";
 interface Quiz {
   description: string;
   id: number;
   name: string;
   pregenerated: boolean;
-  username: string | null;
+  scores: [{ score: number }] | [];
 }
+
+const mapQuizzes = (
+  quizzes: Quiz[],
+  pregenerated: boolean
+): QuizzesWithScoresLinks[] =>
+  quizzes
+    .filter((quiz: Quiz) => quiz.pregenerated === pregenerated)
+    .map((quiz: Quiz) => ({
+      quizid: quiz.id,
+      name: quiz.name,
+      description: quiz.description,
+      score: quiz.scores.length !== 0 ? quiz.scores[0].score : "Not Taken",
+      link: Object.values(quizIds).includes(quiz.id)
+        ? `/quiz/${Object.keys(quizIds)
+            .find((key) => quizIds[key] === quiz.id)
+            ?.replace("_", "/")}`
+        : `/quiz/${quiz.id}`,
+    }));
 
 function Dashboard() {
   const { auth, user } = useContext(AuthContext);
 
-  const [temp, setTemp] = useState<string>("");
-  const [quizScores, setQuizScores] = useState<QuizScore[]>([]);
-  const [pregeneratedQuizzes, setPregeneratedQuizzes] = useState<QuizScore[]>(
-    []
-  );
-  const [usergeneratedQuizzes, setUsergeneratedQuizzes] = useState<QuizScore[]>(
-    []
-  );
+  const [helloText, setHelloText] = useState<string>("");
+  const [quizScores, setQuizScores] = useState<QuizzesWithScoresLinks[]>([]);
+  const [pregeneratedQuizzes, setPregeneratedQuizzes] = useState<
+    QuizzesWithScoresLinks[]
+  >([]);
+  const [usergeneratedQuizzes, setUsergeneratedQuizzes] = useState<
+    QuizzesWithScoresLinks[]
+  >([]);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    auth ? setTemp(`Hello, ${user}!`) : navigate("/");
+    auth ? setHelloText(`Hello, ${user}!`) : navigate("/");
   }, [auth]);
 
   useEffect(() => {
     (async () => {
       try {
-        let response = await axios.get("/api/quizzes");
+        let response = await axios.get(`/api/quizzes/quizscores/${user}`);
 
         if (response.status == 200) {
-          //TODO: make this more efficient
-          const pregeneratedQuizzesData: QuizScore[] = response.data.quizzes
-            .filter((quiz: Quiz) => quiz.pregenerated)
-            .map((quiz: Quiz) => ({
-              quizid: quiz.id,
-              name: quiz.name,
-              description: quiz.description,
-              score: null,
-            }));
-          setPregeneratedQuizzes(pregeneratedQuizzesData);
-          const usergeneratedQuizzesData: QuizScore[] = response.data.quizzes
-            .filter((quiz: Quiz) => !quiz.pregenerated)
-            .map((quiz: Quiz) => ({
-              quizid: quiz.id,
-              name: quiz.name,
-              description: quiz.description,
-              score: null,
-            }));
-          setUsergeneratedQuizzes(usergeneratedQuizzesData);
+          setPregeneratedQuizzes(mapQuizzes(response.data.quizzes, true));
+          setUsergeneratedQuizzes(mapQuizzes(response.data.quizzes, false));
         }
       } catch (error) {
         //TODO: Implement error handling
@@ -74,17 +76,25 @@ function Dashboard() {
           const quizzesData = response.data.quizscores.map(
             ({
               quizid,
+              score,
               quiz: { name, description },
             }: {
               quizid: number;
+              score: number;
               quiz: Quiz;
             }) => ({
               quizid: quizid,
               name: name,
               description: description,
-              score: 0, //TODO: change the score once the score column is added to QuizScore table
+              score: score,
+              link: Object.values(quizIds).includes(quizid)
+                ? `/quiz/${Object.keys(quizIds)
+                    .find((key) => quizIds[key] === quizid)
+                    ?.replace("_", "/")}`
+                : `/quiz/${quizid}`,
             })
           );
+
           setQuizScores(quizzesData);
         }
       } catch (error) {
@@ -97,7 +107,7 @@ function Dashboard() {
 
   return (
     <>
-      <NavBar helloText={temp} />
+      <NavBar helloText={helloText} />
       <Link to="/myquizzes"></Link>
       {pregeneratedQuizzes.length != 0 && (
         <>

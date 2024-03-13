@@ -7,10 +7,11 @@ import LogIn from "./Components/LogIn.tsx";
 import HomePage from "./Components/HomePage.tsx";
 import SignUp from "./Components/SignUp.tsx";
 import Dashboard from "./Components/Dashboard.tsx";
-import MainLayout from "./MainLayout.tsx";
 import CreateQuiz from "./Components/CreateQuiz.tsx";
 import MyQuizzes from "./Components/MyQuizzes.tsx";
 import MapQuiz from "./Components/MapQuiz.tsx";
+import NotFound from "./Components/NotFound.tsx";
+import Profile from "./Components/Profile.tsx";
 import TakeQuiz from "./Components/TakeQuiz.tsx";
 
 let router = createBrowserRouter([
@@ -46,16 +47,20 @@ let router = createBrowserRouter([
         element: <TakeQuiz />,
       },
       {
-        path: "/quiz",
-        element: <MainLayout />,
-      },
-      {
         path: "/quiz/:region",
         element: <MapQuiz isFlagsQuiz={false} />,
       },
       {
         path: "/quiz/:region/flags",
         element: <MapQuiz isFlagsQuiz={true} />,
+      },
+      {
+        path: "/profile/:username",
+        element: <Profile />,
+      },
+      {
+        path: "*",
+        element: <NotFound />,
       },
     ],
   },

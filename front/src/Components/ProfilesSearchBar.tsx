@@ -3,26 +3,21 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
-import { quizIds } from "./utils";
 import { useNavigate } from "react-router-dom";
 
-interface Quiz {
+interface User {
   id: number;
-  name: string;
-  description: string;
-  pregenerated: boolean;
-  username: string | null;
+  username: string;
 }
 
-interface QuizLink {
-  id: number;
-  name: string;
+interface UserLink {
+  username: string;
   link: string;
 }
 
-function SearchBar() {
+function ProfilesSearchBar() {
   const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState<readonly QuizLink[]>([]);
+  const [options, setOptions] = useState<readonly UserLink[]>([]);
   const loading = open && options.length === 0;
   const navigate = useNavigate();
 
@@ -35,20 +30,13 @@ function SearchBar() {
 
     (async () => {
       try {
-        let response = await axios.get("/api/quizzes");
+        let response = await axios.get("/api/users");
 
         if (response.status == 200) {
-          const quizzes: QuizLink[] = response.data.quizzes.map(
-            (quiz: Quiz) => ({
-              id: quiz.id,
-              name: quiz.name,
-              link: Object.values(quizIds).includes(quiz.id)
-                ? `/quiz/${Object.keys(quizIds)
-                    .find((key) => quizIds[key] === quiz.id)
-                    ?.replace("_", "/")}`
-                : `/quiz/${quiz.id}`,
-            })
-          );
+          const quizzes: UserLink[] = response.data.users.map((user: User) => ({
+            username: user.username,
+            link: `/profile/${user.username}`,
+          }));
 
           if (active) {
             setOptions([...quizzes]);
@@ -88,17 +76,19 @@ function SearchBar() {
           navigate(option.link);
         }
       }}
-      isOptionEqualToValue={(option, value) => option.name === value.name}
-      getOptionLabel={(option) => option.name}
+      isOptionEqualToValue={(option, value) =>
+        option.username === value.username
+      }
+      getOptionLabel={(option) => option.username}
       options={options}
       loading={loading}
       renderInput={(params) => (
         <TextField
           {...params}
-          placeholder="Search for quizzes"
+          placeholder="Search for users"
           sx={{
             input: {
-              color: "white",
+              color: "black",
             },
           }}
           InputProps={{
@@ -118,4 +108,4 @@ function SearchBar() {
   );
 }
 
-export default SearchBar;
+export default ProfilesSearchBar;
