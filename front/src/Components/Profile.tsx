@@ -25,7 +25,7 @@ interface Quiz {
   id: number;
   name: string;
   pregenerated: boolean;
-  scores: [{ score: number }] | [];
+  scores: [{ score: number; maxscore: number }] | [];
 }
 
 function CustomTabPanel(props: TabPanelProps) {
@@ -53,6 +53,26 @@ function a11yProps(index: number) {
     id: `tab-${index}`,
     "aria-controls": `tabpanel-${index}`,
   };
+}
+
+// this function takes an array of quizscore objects for a user.
+// it removes all duplicate quizscore objects for the same quiz but keepd the quizscore with the highest score for the quiz
+function removeDuplicateQuizzesAndKeepMaxScore(
+  quizscores: QuizzesWithScoresLinks[]
+): QuizzesWithScoresLinks[] {
+  const uniqueHighScoresForQuizzes = new Map<number, QuizzesWithScoresLinks>();
+
+  quizscores.forEach((quizscore) => {
+    // if the quiz doesn't have a score or if the score for the current quiz is the high score
+    if (
+      !uniqueHighScoresForQuizzes.has(quizscore.quizid) ||
+      quizscore.score > uniqueHighScoresForQuizzes.get(quizscore.quizid)!.score
+    ) {
+      uniqueHighScoresForQuizzes.set(quizscore.quizid, quizscore);
+    }
+  });
+
+  return Array.from(uniqueHighScoresForQuizzes.values());
 }
 
 function Profile() {
@@ -117,20 +137,24 @@ function Profile() {
         let response = await axios.get(`/api/quizscores/${username}`);
 
         if (response.status == 200) {
+          console.log(response.data.quizscores);
           const allQuizzesWithScoresForUserData = response.data.quizscores.map(
             ({
               quizid,
               score,
+              maxscore,
               quiz: { name, description },
             }: {
               quizid: number;
               score: number;
+              maxscore: number;
               quiz: Quiz;
             }) => ({
               quizid: quizid,
               name: name,
               description: description,
               score: score,
+              maxscore: maxscore,
               link: Object.values(quizIds).includes(quizid)
                 ? `/quiz/${Object.keys(quizIds)
                     .find((key) => quizIds[key] === quizid)
@@ -139,7 +163,11 @@ function Profile() {
             })
           );
 
-          setAllQuizzesWithScoresForUser(allQuizzesWithScoresForUserData);
+          setAllQuizzesWithScoresForUser(
+            removeDuplicateQuizzesAndKeepMaxScore(
+              allQuizzesWithScoresForUserData
+            )
+          );
         }
       } catch (error) {
         //TODO: Implement error handling
