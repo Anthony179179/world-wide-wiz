@@ -66,7 +66,7 @@ interface NavBarProps {
 
 function NavBar({ helloText }: NavBarProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { setAuth, setUser } = useContext(AuthContext);
+  const { setAuth, setUser, user } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -152,6 +152,9 @@ function NavBar({ helloText }: NavBarProps) {
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
+        <MenuItem onClick={() => navigate(`/profile/${user}`)}>
+          Profile
+        </MenuItem>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </Box>

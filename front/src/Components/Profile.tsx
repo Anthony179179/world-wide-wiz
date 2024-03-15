@@ -89,7 +89,7 @@ function Profile() {
   };
   const navigate = useNavigate();
   useEffect(() => {
-    auth ? setHelloText(`Hello, ${user}!`) : navigate("/dashboard");
+    auth ? setHelloText(`Hello, ${user}!`) : navigate("/");
   }, [auth]);
 
   const { username } = useParams(); //username of the user being searched
@@ -102,7 +102,6 @@ function Profile() {
         ); //may need to change if added drafted quizzes
 
         if (response.status == 200) {
-          console.log(response.data);
           const quizzesWithScoresData: QuizzesWithScoresLinks[] =
             response.data.quizzes.map(
               ({
@@ -137,7 +136,6 @@ function Profile() {
         let response = await axios.get(`/api/quizscores/${username}`);
 
         if (response.status == 200) {
-          console.log(response.data.quizscores);
           const allQuizzesWithScoresForUserData = response.data.quizscores.map(
             ({
               quizid,
