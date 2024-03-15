@@ -62,9 +62,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 interface NavBarProps {
   helloText: string;
+  loggedIn: boolean;
 }
 
-function NavBar({ helloText }: NavBarProps) {
+function NavBar({ helloText, loggedIn }: NavBarProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { setAuth, setUser, user } = useContext(AuthContext);
 
@@ -97,7 +98,9 @@ function NavBar({ helloText }: NavBarProps) {
           <MapIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
             variant="h6"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => {
+              loggedIn ? navigate("/dashboard") : navigate("/");
+            }}
             noWrap
             component="div"
             sx={{ display: { xs: "none", sm: "block" }, cursor: "pointer" }}
@@ -110,31 +113,36 @@ function NavBar({ helloText }: NavBarProps) {
               inputProps={{ "aria-label": "search" }}
             /> */}
           {/* <StyledInputBase></StyledInputBase> */}
+
           <SearchBar></SearchBar>
-          <ProfilesSearchBar></ProfilesSearchBar>
-          <Box sx={{ flexGrow: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
-          >
-            {helloText}
-          </Typography>
-          <Box sx={{ display: "flex" }}>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls="account-menu"
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-          </Box>
-          <Link to="/myquizzes">My Quizzes</Link>
+          {loggedIn && (
+            <>
+              <ProfilesSearchBar></ProfilesSearchBar>
+              <Box sx={{ flexGrow: 1 }} />
+              <Typography
+                variant="h6"
+                noWrap
+                component="div"
+                sx={{ display: { xs: "none", sm: "block" } }}
+              >
+                {helloText}
+              </Typography>
+              <Box sx={{ display: "flex" }}>
+                <IconButton
+                  size="large"
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-controls="account-menu"
+                  aria-haspopup="true"
+                  onClick={handleProfileMenuOpen}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+              </Box>
+              <Link to="/myquizzes">My Quizzes</Link>
+            </>
+          )}
         </Toolbar>
       </AppBar>
       <Menu

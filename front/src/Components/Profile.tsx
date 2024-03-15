@@ -177,7 +177,7 @@ function Profile() {
 
   return (
     <>
-      <NavBar helloText={helloText}></NavBar>
+      <NavBar helloText={helloText} loggedIn={true}></NavBar>
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <AccountCircle sx={{ fontSize: 50 }} />
         <Typography variant="h6" noWrap component="div" sx={{ marginLeft: 1 }}>
