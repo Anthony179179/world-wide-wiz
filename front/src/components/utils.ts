@@ -78,6 +78,7 @@ interface QuizzesWithScoresLinks {
   name: string;
   description: string;
   score: number | string;
+  maxscore: number;
   link: string;
 }
 

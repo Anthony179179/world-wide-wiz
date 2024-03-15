@@ -77,23 +77,12 @@ function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
           const quizIdKey = isFlagsQuiz ? `${region}_flags` : region;
           try {
             if (quizIdKey) {
-              const response = await axios.post(`/api/quizscores/`, {
+              await axios.post(`/api/quizscores/`, {
                 username: user,
                 quizid: quizIds[quizIdKey],
                 score: score,
+                maxscore: numOfCountries,
               });
-
-              if (
-                response.status != 201 &&
-                response.data.error === "Score for quiz already exists"
-              ) {
-                //might need to display feedback if score is successfully created/updated
-                await axios.put(`/api/quizscores/`, {
-                  username: user,
-                  quizid: quizIds[quizIdKey],
-                  score: score,
-                });
-              }
             }
           } catch (error) {
             //TODO: Implement error handling

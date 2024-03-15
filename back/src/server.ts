@@ -123,6 +123,7 @@ app.get("/api/quizzes/quizscores/:playerUsername", async (req, res) => {
           },
           select: {
             score: true,
+            maxscore: true,
           },
         },
         id: true,
@@ -419,13 +420,6 @@ app.post("/api/quizscores", async (req, res) => {
   const { username, quizid, score, maxscore } = req.body;
 
   try {
-    // let existingQuizScore = await prisma.quizScore.findFirst({
-    //   where: { username: username, quizid: quizid },
-    // });
-
-    // if (existingQuizScore !== null)
-    //   return res.status(400).json({ error: "Score for quiz already exists" });
-
     await prisma.quizScore.create({
       data: {
         username: username,

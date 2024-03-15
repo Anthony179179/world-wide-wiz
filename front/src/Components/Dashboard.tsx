@@ -13,7 +13,7 @@ interface Quiz {
   id: number;
   name: string;
   pregenerated: boolean;
-  scores: [{ score: number }] | [];
+  scores: [{ score: number; maxscore: number }] | [];
 }
 
 const mapQuizzes = (
@@ -26,7 +26,11 @@ const mapQuizzes = (
       quizid: quiz.id,
       name: quiz.name,
       description: quiz.description,
-      score: quiz.scores.length !== 0 ? quiz.scores[0].score : "Not Taken",
+      score:
+        quiz.scores.length !== 0
+          ? Math.max(...quiz.scores.map((quizscore) => quizscore.score))
+          : "Not Taken",
+      maxscore: quiz.scores.length !== 0 ? quiz.scores[0].maxscore : 0,
       link: Object.values(quizIds).includes(quiz.id)
         ? `/quiz/${Object.keys(quizIds)
             .find((key) => quizIds[key] === quiz.id)
@@ -70,6 +74,7 @@ function Dashboard() {
 
     (async () => {
       try {
+        //get quiz history
         let response = await axios.get(`/api/quizscores/${user}`);
 
         if (response.status == 200) {
@@ -77,16 +82,19 @@ function Dashboard() {
             ({
               quizid,
               score,
+              maxscore,
               quiz: { name, description },
             }: {
               quizid: number;
               score: number;
+              maxscore: number;
               quiz: Quiz;
             }) => ({
               quizid: quizid,
               name: name,
               description: description,
               score: score,
+              maxscore: maxscore,
               link: Object.values(quizIds).includes(quizid)
                 ? `/quiz/${Object.keys(quizIds)
                     .find((key) => quizIds[key] === quizid)
@@ -94,8 +102,7 @@ function Dashboard() {
                 : `/takequiz/${quizid}`,
             })
           );
-
-          setQuizScores(quizzesData);
+          setQuizScores(quizzesData.reverse());
         }
       } catch (error) {
         //TODO: Implement error handling
@@ -112,25 +119,43 @@ function Dashboard() {
       {pregeneratedQuizzes.length != 0 && (
         <>
           <h2>Quizzes from us</h2>
-          <Box sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <QuizzesCarousel quizzes={pregeneratedQuizzes} />
           </Box>
         </>
       )}
 
       {usergeneratedQuizzes.length != 0 && (
-      <>
-        <h2>Quizzes from users</h2>
-        <Box sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-          <QuizzesCarousel quizzes={usergeneratedQuizzes} />
-        </Box>
-      </>
+        <>
+          <h2>Quizzes from users</h2>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <QuizzesCarousel quizzes={usergeneratedQuizzes} />
+          </Box>
+        </>
       )}
 
       {quizScores.length != 0 && (
         <>
           <h2>Quiz History</h2>
-          <Box sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <QuizzesCarousel quizzes={quizScores} />
           </Box>
         </>

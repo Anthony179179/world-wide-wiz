@@ -36,18 +36,24 @@ function QuizzesCarousel({ quizzes, user }: QuizzesCarouselProps) {
         </Grid>
         <Grid item xs={10}>
           <Grid container spacing={2}>
-            {quizzes.slice(startIndex, startIndex + 4).map((quizzes) => (
-              <Grid key={quizzes.quizid} item xs={3}>
+            {quizzes.slice(startIndex, startIndex + 4).map((quiz, i) => (
+              <Grid key={i} item xs={3}>
                 <Card sx={{ height: "100%" }}>
-                  <CardActionArea onClick={() => navigate(quizzes.link)}>
+                  <CardActionArea onClick={() => navigate(quiz.link)}>
                     <CardContent>
-                      <Typography variant="h5">{quizzes.name}</Typography>
+                      <Typography variant="h5">{quiz.name}</Typography>
                       <Box borderBottom={1} mt={1} mb={1} />
                       <Typography variant="body1">
-                        Description: {quizzes.description}
+                        Description: {quiz.description}
                       </Typography>
                       <Typography variant="body1">
-                        {user ? `${user}'s` : "Your"} score: {quizzes.score}
+                        {user ? `${user}'s` : "Your"} score:{" "}
+                        {typeof quiz.score === "string"
+                          ? quiz.score
+                          : `${quiz.score}/${quiz.maxscore} (${(
+                              (quiz.score / quiz.maxscore) *
+                              100
+                            ).toFixed(2)}%)`}
                       </Typography>
                     </CardContent>
                   </CardActionArea>
