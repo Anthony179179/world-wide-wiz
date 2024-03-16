@@ -9,6 +9,7 @@ interface Question {
   score: number;
   order: number;
   type: "multiple-choice" | "true-false" | "short-answer";
+  [key: string]: string | number | string[];
 }
 
 interface QuestionWithQuizId {
@@ -93,7 +94,7 @@ function CreateQuizUI() {
     setCreateQuizData(newCreateQuizData);
   };
 
-  const handleDeleteQuestion = (question_index: nunber) => {
+  const handleDeleteQuestion = (question_index: number) => {
     const newCreateQuizData: Question[] = [...createQuizData];
     newCreateQuizData.splice(question_index, 1);
     newCreateQuizData.forEach((question, index) => {
@@ -141,6 +142,29 @@ function CreateQuizUI() {
             errors.push(
               `Question ${question.order + 1} does not have any choices`
             );
+        } else {
+          let numEmptyOptions = 0;
+          question.options.forEach((option) => {
+            if (option.trim() === "") {
+              numEmptyOptions += 1;
+            }
+          });
+
+          if (numEmptyOptions !== 0) {
+            errors.push(
+              `Question ${
+                question.order + 1
+              } cannot have ${numEmptyOptions} blank option(s)`
+            );
+          }
+
+          if (question.answer.trim() === "") {
+            errors.push(
+              `Question ${
+                question.order + 1
+              } cannot have an answer belonging to an option that is blank`
+            );
+          }
         }
       });
 
@@ -270,7 +294,12 @@ function CreateQuizUI() {
                       newCreateQuizData[index].options.length - 1
                     ]
                   ) {
-                    newCreateQuizData[index].answer = "";
+                    if (newCreateQuizData[index].options.length <= 1) {
+                      newCreateQuizData[index].answer = "";
+                    } else {
+                      newCreateQuizData[index].answer =
+                        newCreateQuizData[index].options[0];
+                    }
                   }
                   newCreateQuizData[index].options.pop();
                   setCreateQuizData(newCreateQuizData);
