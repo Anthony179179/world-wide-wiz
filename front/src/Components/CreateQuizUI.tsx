@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { AuthContext } from "../authContext";
 import axios from "axios";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "react-beautiful-dnd";
 
 interface Question {
   question: string;
@@ -35,6 +41,27 @@ function CreateQuizUI() {
       type: "short-answer",
     },
   ]);
+
+  const handleOnDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+
+    const newCreateQuizData = Array.from(createQuizData);
+
+    //remove the question at the source index
+    const [reorderedQuestion] = newCreateQuizData.splice(
+      result.source.index,
+      1
+    );
+
+    //place the question back at the destination index
+    newCreateQuizData.splice(result.destination.index, 0, reorderedQuestion);
+
+    newCreateQuizData.forEach((question, index) => {
+      question.order = index;
+    });
+
+    setCreateQuizData(newCreateQuizData);
+  };
 
   const handleAddQuestion = () => {
     setNumQuestions(numQuestions + 1);
@@ -230,129 +257,180 @@ function CreateQuizUI() {
           onChange={(e) => setQuizDescription(e.target.value)}
         />
       </div>
-      {createQuizData.map((question, index) => (
-        <div key={index}>
-          <h2>Question {index + 1}</h2>
-          <label>Question</label>
-          <input
-            type="text"
-            name="question"
-            value={question.question}
-            onChange={(e) =>
-              handleInputChange(index, e.target.name, e.target.value)
-            }
-          />
-          <label>Points:</label>
-          <input
-            type="number"
-            name="score"
-            value={question.score}
-            onChange={(e) =>
-              handleInputChange(index, e.target.name, e.target.value)
-            }
-          />
-          <label>Type:</label>
-          <select
-            name="type"
-            value={question.type}
-            onChange={(e) => handleTypeChange(index, e.target.value)}
-          >
-            <option value="multiple-choice">Multiple Choice</option>
-            <option value="true-false">True/False</option>
-            <option value="short-answer">Short Answer</option>
-          </select>
-          {question.type === "multiple-choice" && (
-            <>
-              <br />
-              <label>Options:</label>
-              <br />
-              {question.options.map((option, choice_index) => (
-                <input
-                  key={choice_index}
-                  type="text"
-                  value={option}
-                  onChange={(e) =>
-                    handleOptionsChange(index, choice_index, e.target.value)
-                  }
-                />
+      <DragDropContext onDragEnd={handleOnDragEnd}>
+        <Droppable droppableId="questions">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {createQuizData.map((question, index) => (
+                <Draggable
+                  key={index}
+                  draggableId={index.toString()}
+                  index={index}
+                >
+                  {(provided) => (
+                    <div
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      ref={provided.innerRef}
+                    >
+                      <h2>Question {index + 1}</h2>
+                      <label>Question</label>
+                      <input
+                        type="text"
+                        name="question"
+                        value={question.question}
+                        onChange={(e) =>
+                          handleInputChange(
+                            index,
+                            e.target.name,
+                            e.target.value
+                          )
+                        }
+                      />
+                      <label>Points:</label>
+                      <input
+                        type="number"
+                        name="score"
+                        value={question.score}
+                        onChange={(e) =>
+                          handleInputChange(
+                            index,
+                            e.target.name,
+                            e.target.value
+                          )
+                        }
+                      />
+                      <label>Type:</label>
+                      <select
+                        name="type"
+                        value={question.type}
+                        onChange={(e) =>
+                          handleTypeChange(index, e.target.value)
+                        }
+                      >
+                        <option value="multiple-choice">Multiple Choice</option>
+                        <option value="true-false">True/False</option>
+                        <option value="short-answer">Short Answer</option>
+                      </select>
+                      {question.type === "multiple-choice" && (
+                        <>
+                          <br />
+                          <label>Options:</label>
+                          <br />
+                          {question.options.map((option, choice_index) => (
+                            <input
+                              key={choice_index}
+                              type="text"
+                              value={option}
+                              onChange={(e) =>
+                                handleOptionsChange(
+                                  index,
+                                  choice_index,
+                                  e.target.value
+                                )
+                              }
+                            />
+                          ))}
+                          <button
+                            onClick={() => {
+                              const newCreateQuizData = [...createQuizData];
+                              newCreateQuizData[index].options.push("");
+                              setCreateQuizData(newCreateQuizData);
+                            }}
+                          >
+                            Add Choice
+                          </button>
+                          <button
+                            onClick={() => {
+                              const newCreateQuizData = [...createQuizData];
+                              if (
+                                newCreateQuizData[index].answer ==
+                                newCreateQuizData[index].options[
+                                  newCreateQuizData[index].options.length - 1
+                                ]
+                              ) {
+                                if (
+                                  newCreateQuizData[index].options.length <= 1
+                                ) {
+                                  newCreateQuizData[index].answer = "";
+                                } else {
+                                  newCreateQuizData[index].answer =
+                                    newCreateQuizData[index].options[0];
+                                }
+                              }
+                              newCreateQuizData[index].options.pop();
+                              setCreateQuizData(newCreateQuizData);
+                            }}
+                          >
+                            Delete Choice
+                          </button>
+                          <select
+                            name="answer"
+                            value={question.answer}
+                            onChange={(e) =>
+                              handleInputChange(
+                                index,
+                                e.target.name,
+                                e.target.value
+                              )
+                            }
+                          >
+                            {question.options.map((option, op_index) => (
+                              <option key={op_index} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </select>
+                        </>
+                      )}
+                      {question.type === "true-false" && (
+                        <>
+                          <label>Answer:</label>
+                          <select
+                            name="answer"
+                            value={question.answer}
+                            onChange={(e) =>
+                              handleInputChange(
+                                index,
+                                e.target.name,
+                                e.target.value
+                              )
+                            }
+                          >
+                            <option value="true">True</option>
+                            <option value="false">False</option>
+                          </select>
+                        </>
+                      )}
+                      {question.type === "short-answer" && (
+                        <>
+                          <label>Answer:</label>
+                          <input
+                            type="text"
+                            name="answer"
+                            value={question.answer}
+                            onChange={(e) =>
+                              handleInputChange(
+                                index,
+                                e.target.name,
+                                e.target.value
+                              )
+                            }
+                          />
+                        </>
+                      )}
+                      <button onClick={() => handleDeleteQuestion(index)}>
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </Draggable>
               ))}
-              <button
-                onClick={() => {
-                  const newCreateQuizData = [...createQuizData];
-                  newCreateQuizData[index].options.push("");
-                  setCreateQuizData(newCreateQuizData);
-                }}
-              >
-                Add Choice
-              </button>
-              <button
-                onClick={() => {
-                  const newCreateQuizData = [...createQuizData];
-                  if (
-                    newCreateQuizData[index].answer ==
-                    newCreateQuizData[index].options[
-                      newCreateQuizData[index].options.length - 1
-                    ]
-                  ) {
-                    if (newCreateQuizData[index].options.length <= 1) {
-                      newCreateQuizData[index].answer = "";
-                    } else {
-                      newCreateQuizData[index].answer =
-                        newCreateQuizData[index].options[0];
-                    }
-                  }
-                  newCreateQuizData[index].options.pop();
-                  setCreateQuizData(newCreateQuizData);
-                }}
-              >
-                Delete Choice
-              </button>
-              <select
-                name="answer"
-                value={question.answer}
-                onChange={(e) =>
-                  handleInputChange(index, e.target.name, e.target.value)
-                }
-              >
-                {question.options.map((option, op_index) => (
-                  <option key={op_index} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </>
+              {provided.placeholder}
+            </div>
           )}
-          {question.type === "true-false" && (
-            <>
-              <label>Answer:</label>
-              <select
-                name="answer"
-                value={question.answer}
-                onChange={(e) =>
-                  handleInputChange(index, e.target.name, e.target.value)
-                }
-              >
-                <option value="true">True</option>
-                <option value="false">False</option>
-              </select>
-            </>
-          )}
-          {question.type === "short-answer" && (
-            <>
-              <label>Answer:</label>
-              <input
-                type="text"
-                name="answer"
-                value={question.answer}
-                onChange={(e) =>
-                  handleInputChange(index, e.target.name, e.target.value)
-                }
-              />
-            </>
-          )}
-          <button onClick={() => handleDeleteQuestion(index)}>Delete</button>
-        </div>
-      ))}
+        </Droppable>
+      </DragDropContext>
       <button onClick={handleAddQuestion}>Add Question</button>
       <button onClick={handleCreateQuiz}>Create Quiz</button>
     </div>
