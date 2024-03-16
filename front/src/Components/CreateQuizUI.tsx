@@ -1,13 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AuthContext } from "../authContext";
+import axios from "axios";
 
 interface Question {
   question: string;
   answer: string;
-  options: [string];
+  options: string[];
   score: number;
   order: number;
-  type: string;
+  type: "multiple-choice" | "true-false" | "short-answer";
+}
+
+interface QuestionWithQuizId {
+  question: string;
+  answer: string;
+  options: string[];
+  score: number;
+  order: number;
+  quizid: number;
 }
 
 function CreateQuizUI() {
@@ -18,7 +28,7 @@ function CreateQuizUI() {
     {
       question: "",
       answer: "",
-      options: [""],
+      options: [],
       score: 0,
       order: 0,
       type: "multiple-choice",
@@ -32,7 +42,7 @@ function CreateQuizUI() {
       {
         question: "",
         answer: "",
-        options: [""],
+        options: [],
         score: 0,
         order: 0,
         type: "multiple-choice",
@@ -47,9 +57,8 @@ function CreateQuizUI() {
     option_index?: number
   ) => {
     const newCreateQuizData: Question[] = [...createQuizData];
-
-    if (option_index) {
-      newCreateQuizData[question_index][property_name][option_index] = value;
+    if (option_index !== undefined) {
+      newCreateQuizData[question_index].options[option_index] = value;
     } else {
       newCreateQuizData[question_index][property_name] = value;
     }
@@ -62,6 +71,89 @@ function CreateQuizUI() {
     newCreateQuizData.splice(question_index, 1);
     setCreateQuizData(newCreateQuizData);
   };
+
+  async function handleCreateQuiz() {
+    const user = "khangarook"; // need to change
+    try {
+      const response = await axios.post(`/api/quizzes/`, {
+        name: quizName,
+        description: quizDescription,
+        username: user,
+      });
+
+      if (response.status == 201) {
+        const quizid = response.data.quiz.id;
+        const errors: string[] = [];
+        const newCreateQuizzesData: QuestionWithQuizId[] = [];
+
+        createQuizData.forEach((question) => {
+          let { type, ...questionWithoutType } = question;
+
+          if (question.question === "") {
+            errors.push(`Question ${questionWithoutType.order + 1} is empty`);
+          }
+
+          if (question.answer === "") {
+            errors.push(
+              `Question ${questionWithoutType.order + 1} has no answer`
+            );
+          }
+
+          if (question.score < 0) {
+            errors.push(
+              `Question ${
+                questionWithoutType.order + 1
+              } cannot have negative points`
+            );
+          }
+
+          if (question.order < 0) {
+            errors.push(
+              `Question ${
+                questionWithoutType.order + 1
+              } cannot have a negative order`
+            );
+          }
+
+          if (question.options.length == 0) {
+            if (type == "multiple-choice" || type == "true-false")
+              errors.push(
+                `Question ${
+                  questionWithoutType.order + 1
+                } does not have any choices`
+              );
+          }
+
+          newCreateQuizzesData.push({ ...questionWithoutType, quizid: quizid });
+        });
+
+        if (errors.length !== 0) {
+          //need to print error
+          console.log(errors);
+          return;
+        }
+
+        if (newCreateQuizzesData.length === 0) {
+          //need to print error
+          console.log("NEED QUESTIONS");
+          return;
+        }
+
+        const responseQuestions = await axios.post(
+          `/api/questions/`,
+          newCreateQuizzesData
+        );
+
+        if (responseQuestions.status != 201) {
+          console.log(responseQuestions);
+        }
+      }
+    } catch (error) {
+      //TODO: Implement error handling
+      console.log("ERROR HAS BEEN ENCOUNTERED:");
+      console.log(error);
+    }
+  }
 
   return (
     <div>
@@ -178,6 +270,7 @@ function CreateQuizUI() {
         </div>
       ))}
       <button onClick={handleAddForm}>Add Question</button>
+      <button onClick={handleCreateQuiz}>Create Quiz</button>
     </div>
   );
 }

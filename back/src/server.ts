@@ -468,7 +468,7 @@ app.post("/api/quizzes", async (req: Request<NewQuiz>, res) => {
         questions: {},
       },
     });
-    return res.status(201).json(quiz);
+    return res.status(201).json({ quiz: quiz });
   } catch (err) {
     const error = err as Object;
     console.log(error.toString());
