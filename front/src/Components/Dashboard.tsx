@@ -173,9 +173,12 @@ function Dashboard() {
                 <Grid item>
                   <Button
                     variant="outlined"
-                    color="primary"
                     startIcon={<AddCircleOutline />}
-                    style={{ marginTop: "23px" }}
+                    style={{
+                      marginTop: "23px",
+                      color: "#103060",
+                      border: "1px solid #103060",
+                    }}
                     onClick={() => navigate("/createquiz")}
                   >
                     Create Quiz

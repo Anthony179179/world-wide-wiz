@@ -294,7 +294,7 @@ function CreateQuizUI() {
               padding: "20px",
               width: "760px",
               marginBottom: "10px",
-              borderTop: "6px solid #2E5A88",
+              borderTop: "6px solid #103060",
             }}
           >
             <Grid container>
@@ -591,9 +591,15 @@ function CreateQuizUI() {
               <AddCircleOutline />
             </IconButton>
           </Grid>
-          <Button color="primary" onClick={handleCreateQuiz}>
-            Create Quiz
-          </Button>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button
+              variant="contained"
+              style={{ backgroundColor: "#103060" }}
+              onClick={handleCreateQuiz}
+            >
+              Create Quiz
+            </Button>
+          </div>
         </Grid>
       </Grid>
       <Snackbar

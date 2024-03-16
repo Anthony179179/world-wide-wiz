@@ -75,7 +75,13 @@ function SearchBar() {
     <Autocomplete
       forcePopupIcon={false}
       id="asynchronous-demo"
-      sx={{ width: 300 }}
+      sx={{
+        width: 300,
+        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+          {
+            borderColor: "white",
+          },
+      }}
       open={open}
       onOpen={() => {
         setOpen(true);

@@ -63,7 +63,14 @@ function ProfilesSearchBar() {
     <Autocomplete
       forcePopupIcon={false}
       id="asynchronous-demo"
-      sx={{ width: 300, marginLeft: "15px" }}
+      sx={{
+        width: 300,
+        marginLeft: "15px",
+        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+          {
+            borderColor: "white",
+          },
+      }}
       open={open}
       onOpen={() => {
         setOpen(true);

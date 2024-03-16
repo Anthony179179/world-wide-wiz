@@ -46,7 +46,7 @@ function NavBar({ helloText, loggedIn }: NavBarProps) {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" style={{ backgroundColor: "#103060" }}>
         <Toolbar>
           <MapIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
