@@ -56,7 +56,7 @@ function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    auth ? setHelloText(`Hello, ${user}!`) : navigate("/");
+    auth ? setHelloText(`Hello, ${user}!`) : navigate("/login");
   }, [auth]);
 
   useEffect(() => {

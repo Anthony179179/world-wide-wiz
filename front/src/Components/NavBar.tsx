@@ -1,13 +1,12 @@
 import { useState, MouseEvent, useContext } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import { AuthContext } from "../authContext";
-import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MapIcon from "@mui/icons-material/Map";
 import SearchBar from "./SearchBar";
 import axios from "axios";
 import ProfilesSearchBar from "./ProfilesSearchBar";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
   AppBar,

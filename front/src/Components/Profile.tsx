@@ -89,7 +89,7 @@ function Profile() {
   };
   const navigate = useNavigate();
   useEffect(() => {
-    auth ? setHelloText(`Hello, ${user}!`) : navigate("/");
+    auth ? setHelloText(`Hello, ${user}!`) : navigate("/login");
   }, [auth]);
 
   const { username } = useParams(); //username of the user being searched

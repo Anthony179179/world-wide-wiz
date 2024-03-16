@@ -72,7 +72,7 @@ function CreateQuizUI() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    auth ? setHelloText(`Hello, ${user}!`) : navigate("/");
+    auth ? setHelloText(`Hello, ${user}!`) : navigate("/login");
   }, [auth]);
 
   const handleOnDragEnd = (result: DropResult) => {
