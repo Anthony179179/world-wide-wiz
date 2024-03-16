@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./Layout.tsx";
@@ -8,7 +7,6 @@ import HomePage from "./Components/HomePage.tsx";
 import SignUp from "./Components/SignUp.tsx";
 import Dashboard from "./Components/Dashboard.tsx";
 import CreateQuiz from "./Components/CreateQuiz.tsx";
-import MyQuizzes from "./Components/MyQuizzes.tsx";
 import MapQuiz from "./Components/MapQuiz.tsx";
 import NotFound from "./Components/NotFound.tsx";
 import Profile from "./Components/Profile.tsx";
@@ -33,10 +31,6 @@ let router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <Dashboard />,
-      },
-      {
-        path: "/myquizzes",
-        element: <MyQuizzes />,
       },
       {
         path: "/createquiz",
@@ -67,7 +61,5 @@ let router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+  <RouterProvider router={router} />
 );

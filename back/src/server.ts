@@ -95,6 +95,7 @@ app.get(
             },
             select: {
               score: true,
+              maxscore: true,
             },
           },
           id: true,
@@ -468,7 +469,7 @@ app.post("/api/quizzes", async (req: Request<NewQuiz>, res) => {
         questions: {},
       },
     });
-    return res.status(201).json(quiz);
+    return res.status(201).json({ quiz: quiz });
   } catch (err) {
     const error = err as Object;
     console.log(error.toString());
@@ -500,6 +501,21 @@ app.post("/api/questions", async (req: Request<NewQuestion>, res) => {
       },
     });
     return res.status(201).json(questionRes);
+  } catch (err) {
+    const error = err as Object;
+    console.log(error.toString());
+    return res.status(400).json({ error: error.toString() });
+  }
+});
+
+//add many questions to a quiz
+app.post("/api/questions/many", async (req: Request<NewQuestion[]>, res) => {
+  const { questions } = req.body;
+  try {
+    const questionsRes = await prisma.question.createMany({
+      data: questions,
+    });
+    return res.status(201).json({ questions: questionsRes });
   } catch (err) {
     const error = err as Object;
     console.log(error.toString());

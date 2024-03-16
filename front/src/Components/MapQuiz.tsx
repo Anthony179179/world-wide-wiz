@@ -25,6 +25,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { Layer, LayerEvent } from "leaflet";
 import { AuthContext } from "../authContext";
+import NavBar from "./NavBar";
 
 const regions = ["americas", "asia", "africa", "europe", "oceania"];
 
@@ -182,6 +183,10 @@ function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
 
   return (
     <>
+      <NavBar
+        helloText={auth !== null && user !== null ? `Hello, ${user}!` : ""}
+        loggedIn={auth !== null && user !== null}
+      ></NavBar>
       <div>
         <h1>
           {region ? region[0].toUpperCase() + region.slice(1) : ""} Map Quiz

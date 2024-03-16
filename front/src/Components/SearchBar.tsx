@@ -1,7 +1,6 @@
 import { useState, useEffect, Fragment } from "react";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import CircularProgress from "@mui/material/CircularProgress";
+import SearchIcon from "@mui/icons-material/Search";
+import { TextField, Autocomplete, CircularProgress } from "@mui/material";
 import axios from "axios";
 import { quizIds } from "./utils";
 import { useNavigate } from "react-router-dom";
@@ -74,8 +73,15 @@ function SearchBar() {
 
   return (
     <Autocomplete
+      forcePopupIcon={false}
       id="asynchronous-demo"
-      sx={{ width: 300 }}
+      sx={{
+        width: 300,
+        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+          {
+            borderColor: "white",
+          },
+      }}
       open={open}
       onOpen={() => {
         setOpen(true);
@@ -99,10 +105,22 @@ function SearchBar() {
           sx={{
             input: {
               color: "white",
+              marginLeft: "15px",
             },
           }}
           InputProps={{
             ...params.InputProps,
+            style: {
+              borderRadius: "10px",
+              padding: "2px 10px 2px 10px",
+              border: "1px solid white",
+            },
+            startAdornment: (
+              <Fragment>
+                <SearchIcon style={{ color: "white" }} />
+                {params.InputProps.startAdornment}
+              </Fragment>
+            ),
             endAdornment: (
               <Fragment>
                 {loading ? (

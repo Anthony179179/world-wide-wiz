@@ -25,7 +25,7 @@ interface Quiz {
   id: number;
   name: string;
   pregenerated: boolean;
-  scores: [{ score: number }] | [];
+  scores: [{ score: number; maxscore: number }] | [];
 }
 
 function CustomTabPanel(props: TabPanelProps) {
@@ -55,6 +55,26 @@ function a11yProps(index: number) {
   };
 }
 
+// this function takes an array of quizscore objects for a user.
+// it removes all duplicate quizscore objects for the same quiz but keepd the quizscore with the highest score for the quiz
+function removeDuplicateQuizzesAndKeepMaxScore(
+  quizscores: QuizzesWithScoresLinks[]
+): QuizzesWithScoresLinks[] {
+  const uniqueHighScoresForQuizzes = new Map<number, QuizzesWithScoresLinks>();
+
+  quizscores.forEach((quizscore) => {
+    // if the quiz doesn't have a score or if the score for the current quiz is the high score
+    if (
+      !uniqueHighScoresForQuizzes.has(quizscore.quizid) ||
+      quizscore.score > uniqueHighScoresForQuizzes.get(quizscore.quizid)!.score
+    ) {
+      uniqueHighScoresForQuizzes.set(quizscore.quizid, quizscore);
+    }
+  });
+
+  return Array.from(uniqueHighScoresForQuizzes.values());
+}
+
 function Profile() {
   const [value, setValue] = useState(0);
   const { auth, user } = useContext(AuthContext);
@@ -69,7 +89,7 @@ function Profile() {
   };
   const navigate = useNavigate();
   useEffect(() => {
-    auth ? setHelloText(`Hello, ${user}!`) : navigate("/dashboard");
+    auth ? setHelloText(`Hello, ${user}!`) : navigate("/login");
   }, [auth]);
 
   const { username } = useParams(); //username of the user being searched
@@ -82,7 +102,6 @@ function Profile() {
         ); //may need to change if added drafted quizzes
 
         if (response.status == 200) {
-          console.log(response.data);
           const quizzesWithScoresData: QuizzesWithScoresLinks[] =
             response.data.quizzes.map(
               ({
@@ -94,12 +113,16 @@ function Profile() {
                 id: number;
                 description: string;
                 name: string;
-                scores: [{ score: number }] | [];
+                scores: [{ score: number; maxscore: number }] | [];
               }) => ({
                 quizid: id,
                 name: name,
                 description: description,
-                score: scores.length !== 0 ? scores[0].score : "Not Taken",
+                score:
+                  scores.length !== 0
+                    ? Math.max(...scores.map((quizscore) => quizscore.score))
+                    : "Not Taken",
+                maxscore: scores.length !== 0 ? scores[0].maxscore : 0,
                 link: `/takequiz/${id}`,
               })
             );
@@ -121,16 +144,19 @@ function Profile() {
             ({
               quizid,
               score,
+              maxscore,
               quiz: { name, description },
             }: {
               quizid: number;
               score: number;
+              maxscore: number;
               quiz: Quiz;
             }) => ({
               quizid: quizid,
               name: name,
               description: description,
               score: score,
+              maxscore: maxscore,
               link: Object.values(quizIds).includes(quizid)
                 ? `/quiz/${Object.keys(quizIds)
                     .find((key) => quizIds[key] === quizid)
@@ -139,7 +165,11 @@ function Profile() {
             })
           );
 
-          setAllQuizzesWithScoresForUser(allQuizzesWithScoresForUserData);
+          setAllQuizzesWithScoresForUser(
+            removeDuplicateQuizzesAndKeepMaxScore(
+              allQuizzesWithScoresForUserData
+            )
+          );
         }
       } catch (error) {
         //TODO: Implement error handling
@@ -151,35 +181,42 @@ function Profile() {
 
   return (
     <>
-      <NavBar helloText={helloText}></NavBar>
-      <Box sx={{ display: "flex", alignItems: "center" }}>
-        <AccountCircle sx={{ fontSize: 50 }} />
-        <Typography variant="h6" noWrap component="div" sx={{ marginLeft: 1 }}>
-          {username}
-        </Typography>
-      </Box>
-
-      <Box sx={{ width: "100%" }}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            aria-label="basic tabs example"
+      <NavBar helloText={helloText} loggedIn={true}></NavBar>
+      <div style={{ margin: "20px" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <AccountCircle sx={{ fontSize: 50 }} />
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ marginLeft: 1 }}
           >
-            <Tab label="Quizzes" {...a11yProps(0)} />
-            <Tab label="Scores" {...a11yProps(1)} />
-          </Tabs>
+            {username}
+          </Typography>
         </Box>
-        <CustomTabPanel value={value} index={0}>
-          <QuizzesCarousel quizzes={quizzesWithScores} />
-        </CustomTabPanel>
-        <CustomTabPanel value={value} index={1}>
-          <QuizzesCarousel
-            quizzes={allQuizzesWithScoresForUser}
-            user={username}
-          />
-        </CustomTabPanel>
-      </Box>
+
+        <Box sx={{ width: "100%" }}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="basic tabs example"
+            >
+              <Tab label="Quizzes" {...a11yProps(0)} />
+              <Tab label="Scores" {...a11yProps(1)} />
+            </Tabs>
+          </Box>
+          <CustomTabPanel value={value} index={0}>
+            <QuizzesCarousel quizzes={quizzesWithScores} />
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={1}>
+            <QuizzesCarousel
+              quizzes={allQuizzesWithScoresForUser}
+              user={username}
+            />
+          </CustomTabPanel>
+        </Box>
+      </div>
     </>
   );
 }

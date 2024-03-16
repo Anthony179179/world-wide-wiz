@@ -5,9 +5,9 @@ import NavBar from "./NavBar";
 import QuizzesCarousel from "./QuizzesCarousel";
 import axios from "axios";
 import { QuizzesWithScoresLinks } from "./utils";
-import { Link } from "react-router-dom";
 import { quizIds } from "./utils";
-import { Box } from "@mui/material";
+import { Box, Grid, Button } from "@mui/material";
+import { AddCircleOutline } from "@mui/icons-material";
 interface Quiz {
   description: string;
   id: number;
@@ -42,6 +42,9 @@ function Dashboard() {
   const { auth, user } = useContext(AuthContext);
 
   const [helloText, setHelloText] = useState<string>("");
+  const [yourQuizzesWithScoresData, setYourQuizzesWithScoresData] = useState<
+    QuizzesWithScoresLinks[]
+  >([]);
   const [quizScores, setQuizScores] = useState<QuizzesWithScoresLinks[]>([]);
   const [pregeneratedQuizzes, setPregeneratedQuizzes] = useState<
     QuizzesWithScoresLinks[]
@@ -53,10 +56,50 @@ function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    auth ? setHelloText(`Hello, ${user}!`) : navigate("/");
+    auth ? setHelloText(`Hello, ${user}!`) : navigate("/login");
   }, [auth]);
 
   useEffect(() => {
+    (async () => {
+      try {
+        let response = await axios.get(
+          `/api/quizzes/${user}/quizscores/${user}`
+        );
+
+        if (response.status == 200) {
+          const yourQuizzesWithScoresData: QuizzesWithScoresLinks[] =
+            response.data.quizzes.map(
+              ({
+                id,
+                description,
+                name,
+                scores,
+              }: {
+                id: number;
+                description: string;
+                name: string;
+                scores: [{ score: number; maxscore: number }] | [];
+              }) => ({
+                quizid: id,
+                name: name,
+                description: description,
+                score:
+                  scores.length !== 0
+                    ? Math.max(...scores.map((quizscore) => quizscore.score))
+                    : "Not Taken",
+                maxscore: scores.length !== 0 ? scores[0].maxscore : 0,
+                link: `/takequiz/${id}`,
+              })
+            );
+          setYourQuizzesWithScoresData(yourQuizzesWithScoresData);
+        }
+      } catch (error) {
+        //TODO: Implement error handling
+        console.log("ERROR HAS BEEN ENCOUNTERED:");
+        console.log(error);
+      }
+    })();
+
     (async () => {
       try {
         let response = await axios.get(`/api/quizzes/quizscores/${user}`);
@@ -114,52 +157,93 @@ function Dashboard() {
 
   return (
     <>
-      <NavBar helloText={helloText} />
-      <Link to="/myquizzes"></Link>
-      {pregeneratedQuizzes.length != 0 && (
-        <>
-          <h2>Quizzes from us</h2>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <QuizzesCarousel quizzes={pregeneratedQuizzes} />
-          </Box>
-        </>
-      )}
+      <NavBar helloText={helloText} loggedIn={true} />
+      <Grid
+        container
+        style={{ marginRight: "40px", marginLeft: "50px" }}
+        justifyContent={"center"}
+      >
+        <Grid item>
+          {yourQuizzesWithScoresData.length != 0 && (
+            <>
+              <Grid container alignContent="center" spacing={2}>
+                <Grid item>
+                  <h2>My Quizzes</h2>
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="outlined"
+                    startIcon={<AddCircleOutline />}
+                    style={{
+                      marginTop: "23px",
+                      color: "#103060",
+                      border: "1px solid #103060",
+                    }}
+                    onClick={() => navigate("/createquiz")}
+                  >
+                    Create Quiz
+                  </Button>
+                </Grid>
+              </Grid>
 
-      {usergeneratedQuizzes.length != 0 && (
-        <>
-          <h2>Quizzes from users</h2>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <QuizzesCarousel quizzes={usergeneratedQuizzes} />
-          </Box>
-        </>
-      )}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <QuizzesCarousel quizzes={yourQuizzesWithScoresData} />
+              </Box>
+            </>
+          )}
 
-      {quizScores.length != 0 && (
-        <>
-          <h2>Quiz History</h2>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <QuizzesCarousel quizzes={quizScores} />
-          </Box>
-        </>
-      )}
+          {pregeneratedQuizzes.length != 0 && (
+            <>
+              <h2>Quizzes from us</h2>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <QuizzesCarousel quizzes={pregeneratedQuizzes} />
+              </Box>
+            </>
+          )}
+
+          {usergeneratedQuizzes.length != 0 && (
+            <>
+              <h2>Quizzes from users</h2>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <QuizzesCarousel quizzes={usergeneratedQuizzes} />
+              </Box>
+            </>
+          )}
+
+          {quizScores.length != 0 && (
+            <>
+              <h2>Quiz History</h2>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <QuizzesCarousel quizzes={quizScores} />
+              </Box>
+            </>
+          )}
+        </Grid>
+      </Grid>
     </>
   );
 }
