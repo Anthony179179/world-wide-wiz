@@ -1,9 +1,8 @@
 import { useState, useEffect, Fragment } from "react";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { TextField, Autocomplete, CircularProgress } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 
 interface User {
   id: number;
@@ -62,8 +61,9 @@ function ProfilesSearchBar() {
 
   return (
     <Autocomplete
+      forcePopupIcon={false}
       id="asynchronous-demo"
-      sx={{ width: 300 }}
+      sx={{ width: 300, marginLeft: "15px" }}
       open={open}
       onOpen={() => {
         setOpen(true);
@@ -88,11 +88,23 @@ function ProfilesSearchBar() {
           placeholder="Search for users"
           sx={{
             input: {
-              color: "black",
+              color: "white",
+              marginLeft: "15px",
             },
           }}
           InputProps={{
             ...params.InputProps,
+            style: {
+              borderRadius: "10px",
+              padding: "2px 10px 2px 10px",
+              border: "1px solid white",
+            },
+            startAdornment: (
+              <Fragment>
+                <SearchIcon style={{ color: "white" }} />
+                {params.InputProps.startAdornment}
+              </Fragment>
+            ),
             endAdornment: (
               <Fragment>
                 {loading ? (

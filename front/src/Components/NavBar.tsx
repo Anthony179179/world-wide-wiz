@@ -1,5 +1,4 @@
 import { useState, MouseEvent, useContext } from "react";
-import { styled, alpha } from "@mui/material/styles";
 import { AuthContext } from "../authContext";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MapIcon from "@mui/icons-material/Map";
@@ -14,50 +13,9 @@ import {
   Toolbar,
   IconButton,
   Typography,
-  InputBase,
   MenuItem,
   Menu,
 } from "@mui/material";
-
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
-  },
-}));
 
 interface NavBarProps {
   helloText: string;
@@ -74,10 +32,6 @@ function NavBar({ helloText, loggedIn }: NavBarProps) {
 
   const handleProfileMenuOpen = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
   };
 
   async function handleLogout() {
@@ -102,16 +56,14 @@ function NavBar({ helloText, loggedIn }: NavBarProps) {
             }}
             noWrap
             component="div"
-            sx={{ display: { xs: "none", sm: "block" }, cursor: "pointer" }}
+            sx={{
+              display: { xs: "none", sm: "block" },
+              cursor: "pointer",
+              marginRight: "20px",
+            }}
           >
             World Wide Wiz
           </Typography>
-
-          {/* <StyledInputBase
-              placeholder="Search for quizzes"
-              inputProps={{ "aria-label": "search" }}
-            /> */}
-          {/* <StyledInputBase></StyledInputBase> */}
 
           <SearchBar></SearchBar>
           {loggedIn && (
@@ -156,7 +108,7 @@ function NavBar({ helloText, loggedIn }: NavBarProps) {
           horizontal: "right",
         }}
         open={isMenuOpen}
-        onClose={handleMenuClose}
+        onClose={() => setAnchorEl(null)}
       >
         <MenuItem onClick={() => navigate(`/profile/${user}`)}>
           Profile
