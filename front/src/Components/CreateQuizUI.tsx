@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { AuthContext } from "../authContext";
 import axios from "axios";
 
@@ -21,7 +21,7 @@ interface QuestionWithQuizId {
 }
 
 function CreateQuizUI() {
-  const [createQuizCount, setCreateQuizCount] = useState<number>(1);
+  const [numQuestions, setNumQuestions] = useState<number>(1);
   const [quizName, setQuizName] = useState<string>("");
   const [quizDescription, setQuizDescription] = useState<string>("");
   const [createQuizData, setCreateQuizData] = useState<Question[]>([
@@ -31,12 +31,12 @@ function CreateQuizUI() {
       options: [],
       score: 0,
       order: 0,
-      type: "multiple-choice",
+      type: "short-answer",
     },
   ]);
 
-  const handleAddForm = () => {
-    setCreateQuizCount(createQuizCount + 1);
+  const handleAddQuestion = () => {
+    setNumQuestions(numQuestions + 1);
     setCreateQuizData([
       ...createQuizData,
       {
@@ -44,8 +44,8 @@ function CreateQuizUI() {
         answer: "",
         options: [],
         score: 0,
-        order: 0,
-        type: "multiple-choice",
+        order: numQuestions,
+        type: "short-answer",
       },
     ]);
   };
@@ -53,28 +53,113 @@ function CreateQuizUI() {
   const handleInputChange = (
     question_index: number,
     property_name: string,
-    value: string,
-    option_index?: number
+    value: string
   ) => {
     const newCreateQuizData: Question[] = [...createQuizData];
-    if (option_index !== undefined) {
-      newCreateQuizData[question_index].options[option_index] = value;
-    } else {
-      newCreateQuizData[question_index][property_name] = value;
-    }
 
+    newCreateQuizData[question_index][property_name] = value;
+
+    setCreateQuizData(newCreateQuizData);
+  };
+
+  // Inside your component
+  const handleAddOption = useCallback(
+    (questionIndex: number) => {
+      setCreateQuizData((prev) => {
+        const newCreateQuizData = [...prev];
+        newCreateQuizData[questionIndex].options.push("");
+        return newCreateQuizData;
+      });
+    },
+    [setCreateQuizData]
+  );
+
+  const handleOptionsChange = (
+    question_index: number,
+    option_index: number,
+    value: string
+  ) => {
+    const newCreateQuizData: Question[] = [...createQuizData];
+
+    newCreateQuizData[question_index].options[option_index] = value;
+    setCreateQuizData(newCreateQuizData);
+  };
+
+  const handleTypeChange = (question_index: number, new_type: string) => {
+    const newCreateQuizData: Question[] = [...createQuizData];
+    if (new_type === "short-answer" || new_type === "multiple-choice") {
+      newCreateQuizData[question_index].options = [];
+      newCreateQuizData[question_index].answer = "";
+      newCreateQuizData[question_index].type = new_type;
+    } else if (new_type === "true-false") {
+      newCreateQuizData[question_index].options = ["true", "false"];
+      newCreateQuizData[question_index].answer = "true";
+      newCreateQuizData[question_index].type = new_type;
+    }
     setCreateQuizData(newCreateQuizData);
   };
 
   const handleDeleteQuestion = (question_index: nunber) => {
     const newCreateQuizData: Question[] = [...createQuizData];
     newCreateQuizData.splice(question_index, 1);
+    newCreateQuizData.forEach((question, index) => {
+      question.order = index;
+    });
     setCreateQuizData(newCreateQuizData);
+    setNumQuestions(numQuestions - 1);
   };
 
   async function handleCreateQuiz() {
-    const user = "khangarook"; // need to change
     try {
+      const errors: string[] = [];
+      const user = "khangarook"; // need to change
+
+      if (quizName === "") {
+        errors.push("Quiz needs a name");
+      }
+
+      createQuizData.forEach((question) => {
+        if (question.question === "") {
+          errors.push(`Question ${question.order + 1} is empty`);
+        }
+
+        if (question.answer === "") {
+          errors.push(`Question ${question.order + 1} has no answer`);
+        }
+
+        if (question.score < 0) {
+          errors.push(
+            `Question ${question.order + 1} cannot have negative points`
+          );
+        }
+
+        if (question.order < 0) {
+          errors.push(
+            `Question ${question.order + 1} cannot have a negative order`
+          );
+        }
+
+        if (question.options.length == 0) {
+          if (
+            question.type == "multiple-choice" ||
+            question.type == "true-false"
+          )
+            errors.push(
+              `Question ${question.order + 1} does not have any choices`
+            );
+        }
+      });
+
+      if (createQuizData.length === 0) {
+        errors.push("Your quiz needs questions");
+      }
+
+      if (errors.length !== 0) {
+        //need to print error
+        console.log(errors);
+        return;
+      }
+
       const response = await axios.post(`/api/quizzes/`, {
         name: quizName,
         description: quizDescription,
@@ -83,70 +168,23 @@ function CreateQuizUI() {
 
       if (response.status == 201) {
         const quizid = response.data.quiz.id;
-        const errors: string[] = [];
-        const newCreateQuizzesData: QuestionWithQuizId[] = [];
 
-        createQuizData.forEach((question) => {
-          let { type, ...questionWithoutType } = question;
-
-          if (question.question === "") {
-            errors.push(`Question ${questionWithoutType.order + 1} is empty`);
+        let newCreateQuizData: QuestionWithQuizId[] = createQuizData.map(
+          (question) => {
+            let { type, ...questionWithoutType } = question;
+            return { ...questionWithoutType, quizid: quizid };
           }
-
-          if (question.answer === "") {
-            errors.push(
-              `Question ${questionWithoutType.order + 1} has no answer`
-            );
-          }
-
-          if (question.score < 0) {
-            errors.push(
-              `Question ${
-                questionWithoutType.order + 1
-              } cannot have negative points`
-            );
-          }
-
-          if (question.order < 0) {
-            errors.push(
-              `Question ${
-                questionWithoutType.order + 1
-              } cannot have a negative order`
-            );
-          }
-
-          if (question.options.length == 0) {
-            if (type == "multiple-choice" || type == "true-false")
-              errors.push(
-                `Question ${
-                  questionWithoutType.order + 1
-                } does not have any choices`
-              );
-          }
-
-          newCreateQuizzesData.push({ ...questionWithoutType, quizid: quizid });
-        });
-
-        if (errors.length !== 0) {
-          //need to print error
-          console.log(errors);
-          return;
-        }
-
-        if (newCreateQuizzesData.length === 0) {
-          //need to print error
-          console.log("NEED QUESTIONS");
-          return;
-        }
-
-        const responseQuestions = await axios.post(
-          `/api/questions/`,
-          newCreateQuizzesData
         );
+
+        const responseQuestions = await axios.post(`/api/questions/`, {
+          questions: newCreateQuizData,
+        });
 
         if (responseQuestions.status != 201) {
           console.log(responseQuestions);
         }
+      } else {
+        console.log(response.data.error);
       }
     } catch (error) {
       //TODO: Implement error handling
@@ -186,7 +224,7 @@ function CreateQuizUI() {
               handleInputChange(index, e.target.name, e.target.value)
             }
           />
-          <label>Score:</label>
+          <label>Points:</label>
           <input
             type="number"
             name="score"
@@ -199,9 +237,7 @@ function CreateQuizUI() {
           <select
             name="type"
             value={question.type}
-            onChange={(e) =>
-              handleInputChange(index, e.target.name, e.target.value)
-            }
+            onChange={(e) => handleTypeChange(index, e.target.value)}
           >
             <option value="multiple-choice">Multiple Choice</option>
             <option value="true-false">True/False</option>
@@ -209,33 +245,33 @@ function CreateQuizUI() {
           </select>
           {question.type === "multiple-choice" && (
             <>
+              <br />
               <label>Options:</label>
+              <br />
               {question.options.map((option, choice_index) => (
                 <input
                   key={choice_index}
                   type="text"
                   value={option}
                   onChange={(e) =>
-                    handleInputChange(
-                      index,
-                      "type",
-                      e.target.value,
-                      choice_index
-                    )
+                    handleOptionsChange(index, choice_index, e.target.value)
                   }
                 />
               ))}
-              <button
-                onClick={() =>
-                  setCreateQuizData((prev) => {
-                    const newCreateQuizData = [...prev];
-                    newCreateQuizData[index].options.push("");
-                    return newCreateQuizData;
-                  })
+              <button onClick={() => handleAddOption(index)}>Add Choice</button>
+              <select
+                name="answer"
+                value={question.answer}
+                onChange={(e) =>
+                  handleInputChange(index, e.target.name, e.target.value)
                 }
               >
-                Add Choice
-              </button>
+                {question.options.map((option, op_index) => (
+                  <option key={op_index} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
             </>
           )}
           {question.type === "true-false" && (
@@ -269,7 +305,7 @@ function CreateQuizUI() {
           <button onClick={() => handleDeleteQuestion(index)}>Delete</button>
         </div>
       ))}
-      <button onClick={handleAddForm}>Add Question</button>
+      <button onClick={handleAddQuestion}>Add Question</button>
       <button onClick={handleCreateQuiz}>Create Quiz</button>
     </div>
   );

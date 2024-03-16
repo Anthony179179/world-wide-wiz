@@ -507,6 +507,21 @@ app.post("/api/questions", async (req: Request<NewQuestion>, res) => {
   }
 });
 
+//add many questions to a quiz
+app.post("/api/questions", async (req: Request<NewQuestion[]>, res) => {
+  const { questions } = req.body;
+  try {
+    const questionsRes = await prisma.question.createMany({
+      data: questions,
+    });
+    return res.status(201).json({ questions: questionsRes });
+  } catch (err) {
+    const error = err as Object;
+    console.log(error.toString());
+    return res.status(400).json({ error: error.toString() });
+  }
+});
+
 //
 // PUT REQUESTS --> Need more info about client side usage to determine request types
 //
