@@ -113,12 +113,16 @@ function Profile() {
                 id: number;
                 description: string;
                 name: string;
-                scores: [{ score: number }] | [];
+                scores: [{ score: number; maxscore: number }] | [];
               }) => ({
                 quizid: id,
                 name: name,
                 description: description,
-                score: scores.length !== 0 ? scores[0].score : "Not Taken",
+                score:
+                  scores.length !== 0
+                    ? Math.max(...scores.map((quizscore) => quizscore.score))
+                    : "Not Taken",
+                maxscore: scores.length !== 0 ? scores[0].maxscore : 0,
                 link: `/takequiz/${id}`,
               })
             );
