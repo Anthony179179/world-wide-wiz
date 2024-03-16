@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../authContext";
 import axios from "axios";
 import {
@@ -49,6 +50,8 @@ interface QuestionWithQuizId {
 }
 
 function CreateQuizUI() {
+  const { auth, user } = useContext(AuthContext);
+  const [helloText, setHelloText] = useState<string>("");
   const [openErrorSnackbar, setOpenErrorSnackbar] = useState<boolean>(false);
   const [openSuccessSnackbar, setOpenSuccessSnackbar] =
     useState<boolean>(false);
@@ -66,6 +69,11 @@ function CreateQuizUI() {
       type: "short-answer",
     },
   ]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    auth ? setHelloText(`Hello, ${user}!`) : navigate("/");
+  }, [auth]);
 
   const handleOnDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -242,11 +250,15 @@ function CreateQuizUI() {
 
         let newCreateQuizData: QuestionWithQuizId[] = createQuizData.map(
           (question) => {
-            let { type, ...questionWithoutType } = question;
-            return { ...questionWithoutType, quizid: quizid };
+            let { type, score, ...questionWithoutTypeAndScore } = question;
+            return {
+              ...questionWithoutTypeAndScore,
+              score: parseInt(score.toString()),
+              quizid: quizid,
+            };
           }
         );
-
+        console.log(newCreateQuizData);
         const responseQuestions = await axios.post(`/api/questions/many`, {
           questions: newCreateQuizData,
         });
@@ -272,7 +284,7 @@ function CreateQuizUI() {
   console.log(createQuizData);
   return (
     <>
-      <NavBar helloText="" loggedIn={false} />
+      <NavBar helloText={helloText} loggedIn={true} />
       <Grid container justifyContent="center">
         <Grid item>
           <h1>Create a Quiz</h1>
@@ -364,6 +376,7 @@ function CreateQuizUI() {
                                     name="score"
                                     value={question.score}
                                     style={{ width: "80%" }}
+                                    inputProps={{ min: 0 }}
                                     onChange={(e) =>
                                       handleInputChange(
                                         index,

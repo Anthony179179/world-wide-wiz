@@ -42,6 +42,9 @@ function Dashboard() {
   const { auth, user } = useContext(AuthContext);
 
   const [helloText, setHelloText] = useState<string>("");
+  const [yourQuizzesWithScoresData, setYourQuizzesWithScoresData] = useState<
+    QuizzesWithScoresLinks[]
+  >([]);
   const [quizScores, setQuizScores] = useState<QuizzesWithScoresLinks[]>([]);
   const [pregeneratedQuizzes, setPregeneratedQuizzes] = useState<
     QuizzesWithScoresLinks[]
@@ -57,6 +60,46 @@ function Dashboard() {
   }, [auth]);
 
   useEffect(() => {
+    (async () => {
+      try {
+        let response = await axios.get(
+          `/api/quizzes/${user}/quizscores/${user}`
+        );
+
+        if (response.status == 200) {
+          const yourQuizzesWithScoresData: QuizzesWithScoresLinks[] =
+            response.data.quizzes.map(
+              ({
+                id,
+                description,
+                name,
+                scores,
+              }: {
+                id: number;
+                description: string;
+                name: string;
+                scores: [{ score: number; maxscore: number }] | [];
+              }) => ({
+                quizid: id,
+                name: name,
+                description: description,
+                score:
+                  scores.length !== 0
+                    ? Math.max(...scores.map((quizscore) => quizscore.score))
+                    : "Not Taken",
+                maxscore: scores.length !== 0 ? scores[0].maxscore : 0,
+                link: `/takequiz/${id}`,
+              })
+            );
+          setYourQuizzesWithScoresData(yourQuizzesWithScoresData);
+        }
+      } catch (error) {
+        //TODO: Implement error handling
+        console.log("ERROR HAS BEEN ENCOUNTERED:");
+        console.log(error);
+      }
+    })();
+
     (async () => {
       try {
         let response = await axios.get(`/api/quizzes/quizscores/${user}`);
@@ -116,6 +159,21 @@ function Dashboard() {
     <>
       <NavBar helloText={helloText} loggedIn={true} />
       <Link to="/createquiz"></Link>
+      {yourQuizzesWithScoresData.length != 0 && (
+        <>
+          <h2>Your Quizzes</h2>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <QuizzesCarousel quizzes={yourQuizzesWithScoresData} />
+          </Box>
+        </>
+      )}
+
       {pregeneratedQuizzes.length != 0 && (
         <>
           <h2>Quizzes from us</h2>

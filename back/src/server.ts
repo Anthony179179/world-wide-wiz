@@ -95,6 +95,7 @@ app.get(
             },
             select: {
               score: true,
+              maxscore: true,
             },
           },
           id: true,
