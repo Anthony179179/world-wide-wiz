@@ -140,7 +140,6 @@ function NavBar({ helloText, loggedIn }: NavBarProps) {
                   <AccountCircle />
                 </IconButton>
               </Box>
-              <Link to="/myquizzes">My Quizzes</Link>
             </>
           )}
         </Toolbar>

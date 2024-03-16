@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./Layout.tsx";
@@ -8,7 +7,6 @@ import HomePage from "./Components/HomePage.tsx";
 import SignUp from "./Components/SignUp.tsx";
 import Dashboard from "./Components/Dashboard.tsx";
 import CreateQuizUI from "./Components/CreateQuizUI.tsx";
-import MyQuizzes from "./Components/MyQuizzes.tsx";
 import MapQuiz from "./Components/MapQuiz.tsx";
 import NotFound from "./Components/NotFound.tsx";
 import Profile from "./Components/Profile.tsx";
@@ -33,10 +31,6 @@ let router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <Dashboard />,
-      },
-      {
-        path: "/myquizzes",
-        element: <MyQuizzes />,
       },
       {
         path: "/createquiz",

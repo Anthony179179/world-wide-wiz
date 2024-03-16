@@ -5,9 +5,9 @@ import NavBar from "./NavBar";
 import QuizzesCarousel from "./QuizzesCarousel";
 import axios from "axios";
 import { QuizzesWithScoresLinks } from "./utils";
-import { Link } from "react-router-dom";
 import { quizIds } from "./utils";
-import { Box } from "@mui/material";
+import { Box, Grid, Button, Typography } from "@mui/material";
+import { AddCircleOutline } from "@mui/icons-material";
 interface Quiz {
   description: string;
   id: number;
@@ -158,66 +158,89 @@ function Dashboard() {
   return (
     <>
       <NavBar helloText={helloText} loggedIn={true} />
-      <Link to="/createquiz"></Link>
-      {yourQuizzesWithScoresData.length != 0 && (
-        <>
-          <h2>Your Quizzes</h2>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <QuizzesCarousel quizzes={yourQuizzesWithScoresData} />
-          </Box>
-        </>
-      )}
+      <Grid
+        container
+        style={{ marginRight: "40px", marginLeft: "50px" }}
+        justifyContent={"center"}
+      >
+        <Grid item>
+          {yourQuizzesWithScoresData.length != 0 && (
+            <>
+              <Grid container alignContent="center" spacing={2}>
+                <Grid item>
+                  <h2>My Quizzes</h2>
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    startIcon={<AddCircleOutline />}
+                    style={{ marginTop: "23px" }}
+                    onClick={() => navigate("/createquiz")}
+                  >
+                    Create Quiz
+                  </Button>
+                </Grid>
+              </Grid>
 
-      {pregeneratedQuizzes.length != 0 && (
-        <>
-          <h2>Quizzes from us</h2>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <QuizzesCarousel quizzes={pregeneratedQuizzes} />
-          </Box>
-        </>
-      )}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <QuizzesCarousel quizzes={yourQuizzesWithScoresData} />
+              </Box>
+            </>
+          )}
 
-      {usergeneratedQuizzes.length != 0 && (
-        <>
-          <h2>Quizzes from users</h2>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <QuizzesCarousel quizzes={usergeneratedQuizzes} />
-          </Box>
-        </>
-      )}
+          {pregeneratedQuizzes.length != 0 && (
+            <>
+              <h2>Quizzes from us</h2>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <QuizzesCarousel quizzes={pregeneratedQuizzes} />
+              </Box>
+            </>
+          )}
 
-      {quizScores.length != 0 && (
-        <>
-          <h2>Quiz History</h2>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <QuizzesCarousel quizzes={quizScores} />
-          </Box>
-        </>
-      )}
+          {usergeneratedQuizzes.length != 0 && (
+            <>
+              <h2>Quizzes from users</h2>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <QuizzesCarousel quizzes={usergeneratedQuizzes} />
+              </Box>
+            </>
+          )}
+
+          {quizScores.length != 0 && (
+            <>
+              <h2>Quiz History</h2>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <QuizzesCarousel quizzes={quizScores} />
+              </Box>
+            </>
+          )}
+        </Grid>
+      </Grid>
     </>
   );
 }
