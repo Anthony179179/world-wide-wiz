@@ -182,34 +182,41 @@ function Profile() {
   return (
     <>
       <NavBar helloText={helloText} loggedIn={true}></NavBar>
-      <Box sx={{ display: "flex", alignItems: "center" }}>
-        <AccountCircle sx={{ fontSize: 50 }} />
-        <Typography variant="h6" noWrap component="div" sx={{ marginLeft: 1 }}>
-          {username}
-        </Typography>
-      </Box>
-
-      <Box sx={{ width: "100%" }}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            aria-label="basic tabs example"
+      <div style={{ margin: "20px" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <AccountCircle sx={{ fontSize: 50 }} />
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ marginLeft: 1 }}
           >
-            <Tab label="Quizzes" {...a11yProps(0)} />
-            <Tab label="Scores" {...a11yProps(1)} />
-          </Tabs>
+            {username}
+          </Typography>
         </Box>
-        <CustomTabPanel value={value} index={0}>
-          <QuizzesCarousel quizzes={quizzesWithScores} />
-        </CustomTabPanel>
-        <CustomTabPanel value={value} index={1}>
-          <QuizzesCarousel
-            quizzes={allQuizzesWithScoresForUser}
-            user={username}
-          />
-        </CustomTabPanel>
-      </Box>
+
+        <Box sx={{ width: "100%" }}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="basic tabs example"
+            >
+              <Tab label="Quizzes" {...a11yProps(0)} />
+              <Tab label="Scores" {...a11yProps(1)} />
+            </Tabs>
+          </Box>
+          <CustomTabPanel value={value} index={0}>
+            <QuizzesCarousel quizzes={quizzesWithScores} />
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={1}>
+            <QuizzesCarousel
+              quizzes={allQuizzesWithScoresForUser}
+              user={username}
+            />
+          </CustomTabPanel>
+        </Box>
+      </div>
     </>
   );
 }

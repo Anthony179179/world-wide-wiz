@@ -6,7 +6,7 @@ import QuizzesCarousel from "./QuizzesCarousel";
 import axios from "axios";
 import { QuizzesWithScoresLinks } from "./utils";
 import { quizIds } from "./utils";
-import { Box, Grid, Button, Typography } from "@mui/material";
+import { Box, Grid, Button } from "@mui/material";
 import { AddCircleOutline } from "@mui/icons-material";
 interface Quiz {
   description: string;
