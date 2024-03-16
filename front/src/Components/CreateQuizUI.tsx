@@ -7,6 +7,26 @@ import {
   Draggable,
   DropResult,
 } from "react-beautiful-dnd";
+import {
+  Grid,
+  Card,
+  CardContent,
+  Input,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormControl,
+  Button,
+  ButtonGroup,
+  IconButton,
+} from "@mui/material";
+import {
+  RemoveCircleOutline,
+  AddCircleOutline,
+  Delete,
+} from "@mui/icons-material";
+import NavBar from "./NavBar";
+import "./CreateQuiz.css";
 
 interface Question {
   question: string;
@@ -239,201 +259,314 @@ function CreateQuizUI() {
   }
   console.log(createQuizData);
   return (
-    <div>
-      <h1>Create a Quiz</h1>
+    <>
+      <NavBar helloText="" loggedIn={false} />
       <div>
-        <label>Question</label>
-        <input
-          type="text"
-          name="quizName"
-          value={quizName}
-          onChange={(e) => setQuizName(e.target.value)}
-        />
-        <label>Description</label>
-        <input
-          type="text"
-          name="quizDescription"
-          value={quizDescription}
-          onChange={(e) => setQuizDescription(e.target.value)}
-        />
-      </div>
-      <DragDropContext onDragEnd={handleOnDragEnd}>
-        <Droppable droppableId="questions">
-          {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              {createQuizData.map((question, index) => (
-                <Draggable
-                  key={index}
-                  draggableId={index.toString()}
-                  index={index}
-                >
-                  {(provided) => (
-                    <div
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      ref={provided.innerRef}
-                    >
-                      <h2>Question {index + 1}</h2>
-                      <label>Question</label>
-                      <input
-                        type="text"
-                        name="question"
-                        value={question.question}
-                        onChange={(e) =>
-                          handleInputChange(
-                            index,
-                            e.target.name,
-                            e.target.value
-                          )
-                        }
-                      />
-                      <label>Points:</label>
-                      <input
-                        type="number"
-                        name="score"
-                        value={question.score}
-                        onChange={(e) =>
-                          handleInputChange(
-                            index,
-                            e.target.name,
-                            e.target.value
-                          )
-                        }
-                      />
-                      <label>Type:</label>
-                      <select
-                        name="type"
-                        value={question.type}
-                        onChange={(e) =>
-                          handleTypeChange(index, e.target.value)
-                        }
+        <h1>Create a Quiz</h1>
+        <Card
+          style={{
+            backgroundColor: "#e3f2fd",
+            padding: "20px",
+            width: "760px",
+            marginBottom: "10px",
+            borderTop: "6px solid #2E5A88",
+          }}
+        >
+          <Grid container>
+            <Grid item xs={4}>
+              <InputLabel className="questionLabel">Quiz Name</InputLabel>
+              <Input
+                type="text"
+                name="quizName"
+                value={quizName}
+                style={{ width: "80%" }}
+                onChange={(e) => setQuizName(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={8}>
+              <InputLabel className="questionLabel">Description</InputLabel>
+              <Input
+                type="text"
+                name="quizDescription"
+                value={quizDescription}
+                style={{ width: "100%" }}
+                onChange={(e) => setQuizDescription(e.target.value)}
+              />
+            </Grid>
+          </Grid>
+        </Card>
+        <DragDropContext onDragEnd={handleOnDragEnd}>
+          <Droppable droppableId="questions">
+            {(provided) => (
+              <Grid
+                container
+                direction="column"
+                spacing={2}
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {createQuizData.map((question, index) => (
+                  <Draggable
+                    key={index}
+                    draggableId={index.toString()}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <Grid
+                        item
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        ref={provided.innerRef}
                       >
-                        <option value="multiple-choice">Multiple Choice</option>
-                        <option value="true-false">True/False</option>
-                        <option value="short-answer">Short Answer</option>
-                      </select>
-                      {question.type === "multiple-choice" && (
-                        <>
-                          <br />
-                          <label>Options:</label>
-                          <br />
-                          {question.options.map((option, choice_index) => (
-                            <input
-                              key={choice_index}
-                              type="text"
-                              value={option}
-                              onChange={(e) =>
-                                handleOptionsChange(
-                                  index,
-                                  choice_index,
-                                  e.target.value
-                                )
-                              }
-                            />
-                          ))}
-                          <button
-                            onClick={() => {
-                              const newCreateQuizData = [...createQuizData];
-                              newCreateQuizData[index].options.push("");
-                              setCreateQuizData(newCreateQuizData);
-                            }}
-                          >
-                            Add Choice
-                          </button>
-                          <button
-                            onClick={() => {
-                              const newCreateQuizData = [...createQuizData];
-                              if (
-                                newCreateQuizData[index].answer ==
-                                newCreateQuizData[index].options[
-                                  newCreateQuizData[index].options.length - 1
-                                ]
-                              ) {
-                                if (
-                                  newCreateQuizData[index].options.length <= 1
-                                ) {
-                                  newCreateQuizData[index].answer = "";
-                                } else {
-                                  newCreateQuizData[index].answer =
-                                    newCreateQuizData[index].options[0];
-                                }
-                              }
-                              newCreateQuizData[index].options.pop();
-                              setCreateQuizData(newCreateQuizData);
-                            }}
-                          >
-                            Delete Choice
-                          </button>
-                          <select
-                            name="answer"
-                            value={question.answer}
-                            onChange={(e) =>
-                              handleInputChange(
-                                index,
-                                e.target.name,
-                                e.target.value
-                              )
-                            }
-                          >
-                            {question.options.map((option, op_index) => (
-                              <option key={op_index} value={option}>
-                                {option}
-                              </option>
-                            ))}
-                          </select>
-                        </>
-                      )}
-                      {question.type === "true-false" && (
-                        <>
-                          <label>Answer:</label>
-                          <select
-                            name="answer"
-                            value={question.answer}
-                            onChange={(e) =>
-                              handleInputChange(
-                                index,
-                                e.target.name,
-                                e.target.value
-                              )
-                            }
-                          >
-                            <option value="true">True</option>
-                            <option value="false">False</option>
-                          </select>
-                        </>
-                      )}
-                      {question.type === "short-answer" && (
-                        <>
-                          <label>Answer:</label>
-                          <input
-                            type="text"
-                            name="answer"
-                            value={question.answer}
-                            onChange={(e) =>
-                              handleInputChange(
-                                index,
-                                e.target.name,
-                                e.target.value
-                              )
-                            }
-                          />
-                        </>
-                      )}
-                      <button onClick={() => handleDeleteQuestion(index)}>
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-      <button onClick={handleAddQuestion}>Add Question</button>
-      <button onClick={handleCreateQuiz}>Create Quiz</button>
-    </div>
+                        <Card
+                          style={{
+                            width: "800px",
+                            backgroundColor: "#e3f2fd",
+                            borderRadius: "5px",
+                          }}
+                        >
+                          <CardContent>
+                            <h2>Question {index + 1}</h2>
+                            <Grid container spacing={2} marginBottom={3}>
+                              <Grid item xs={6}>
+                                <InputLabel>Question</InputLabel>
+                                <Input
+                                  type="text"
+                                  name="question"
+                                  value={question.question}
+                                  style={{ width: "90%" }}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      index,
+                                      e.target.name,
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </Grid>
+                              <Grid item xs={3}>
+                                <InputLabel>Points</InputLabel>
+                                <Input
+                                  type="number"
+                                  name="score"
+                                  value={question.score}
+                                  style={{ width: "80%" }}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      index,
+                                      e.target.name,
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </Grid>
+                              <Grid item xs={2}>
+                                <FormControl>
+                                  <InputLabel id="select-type-label">
+                                    Type
+                                  </InputLabel>
+                                  <Select
+                                    labelId="select-type-label"
+                                    name="type"
+                                    label="Type"
+                                    value={question.type}
+                                    onChange={(e) =>
+                                      handleTypeChange(index, e.target.value)
+                                    }
+                                  >
+                                    <MenuItem value="multiple-choice">
+                                      Multiple Choice
+                                    </MenuItem>
+                                    <MenuItem value="true-false">
+                                      True/False
+                                    </MenuItem>
+                                    <MenuItem value="short-answer">
+                                      Short Answer
+                                    </MenuItem>
+                                  </Select>
+                                </FormControl>
+                              </Grid>
+                            </Grid>
+                            {question.type === "multiple-choice" && (
+                              <>
+                                <InputLabel>Options</InputLabel>
+
+                                {question.options.map(
+                                  (option, choice_index) => (
+                                    <Input
+                                      key={choice_index}
+                                      type="text"
+                                      value={option}
+                                      style={{
+                                        display: "block",
+                                        width: "70%",
+                                        marginBottom: "20px",
+                                      }}
+                                      onChange={(e) =>
+                                        handleOptionsChange(
+                                          index,
+                                          choice_index,
+                                          e.target.value
+                                        )
+                                      }
+                                    />
+                                  )
+                                )}
+                                <Grid>
+                                  <ButtonGroup style={{ marginBottom: "10px" }}>
+                                    <IconButton
+                                      onClick={() => {
+                                        const newCreateQuizData = [
+                                          ...createQuizData,
+                                        ];
+                                        newCreateQuizData[index].options.push(
+                                          ""
+                                        );
+                                        setCreateQuizData(newCreateQuizData);
+                                      }}
+                                    >
+                                      <AddCircleOutline />
+                                    </IconButton>
+                                    <IconButton
+                                      onClick={() => {
+                                        const newCreateQuizData = [
+                                          ...createQuizData,
+                                        ];
+                                        if (
+                                          newCreateQuizData[index].answer ==
+                                          newCreateQuizData[index].options[
+                                            newCreateQuizData[index].options
+                                              .length - 1
+                                          ]
+                                        ) {
+                                          if (
+                                            newCreateQuizData[index].options
+                                              .length <= 1
+                                          ) {
+                                            newCreateQuizData[index].answer =
+                                              "";
+                                          } else {
+                                            newCreateQuizData[index].answer =
+                                              newCreateQuizData[
+                                                index
+                                              ].options[0];
+                                          }
+                                        }
+                                        newCreateQuizData[index].options.pop();
+                                        setCreateQuizData(newCreateQuizData);
+                                      }}
+                                    >
+                                      <RemoveCircleOutline />
+                                    </IconButton>
+                                  </ButtonGroup>
+                                </Grid>
+                                <FormControl>
+                                  <InputLabel id="multiple-choice-select-label">
+                                    Answer
+                                  </InputLabel>
+                                  <Select
+                                    label="Answer"
+                                    labelId="multiple-choice-select-label"
+                                    style={{ width: "200px" }}
+                                    name="answer"
+                                    value={question.answer}
+                                    onChange={(e) =>
+                                      handleInputChange(
+                                        index,
+                                        e.target.name,
+                                        e.target.value
+                                      )
+                                    }
+                                  >
+                                    {question.options.map(
+                                      (option, op_index) => (
+                                        <MenuItem
+                                          style={{ height: "40px" }}
+                                          key={op_index}
+                                          value={option}
+                                        >
+                                          {option}
+                                        </MenuItem>
+                                      )
+                                    )}
+                                  </Select>
+                                </FormControl>
+                              </>
+                            )}
+                            {question.type === "true-false" && (
+                              <FormControl>
+                                <InputLabel id="true-false-select-label">
+                                  Answer
+                                </InputLabel>
+                                <Select
+                                  name="answer"
+                                  labelId="true-false-select-label"
+                                  label="Answer"
+                                  value={question.answer}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      index,
+                                      e.target.name,
+                                      e.target.value
+                                    )
+                                  }
+                                >
+                                  <MenuItem value="true">True</MenuItem>
+                                  <MenuItem value="false">False</MenuItem>
+                                </Select>
+                              </FormControl>
+                            )}
+                            {question.type === "short-answer" && (
+                              <>
+                                <InputLabel>Answer</InputLabel>
+                                <Input
+                                  type="text"
+                                  name="answer"
+                                  style={{ width: "95%" }}
+                                  value={question.answer}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      index,
+                                      e.target.name,
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </>
+                            )}
+                            <Grid
+                              container
+                              justifyContent="center"
+                              marginTop={3}
+                            >
+                              <IconButton
+                                onClick={() => handleDeleteQuestion(index)}
+                              >
+                                <Delete />
+                              </IconButton>
+                            </Grid>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </Grid>
+            )}
+          </Droppable>
+        </DragDropContext>
+        <Grid container style={{ width: "800px" }} justifyContent="center">
+          <IconButton color="primary" onClick={handleAddQuestion}>
+            <AddCircleOutline />
+          </IconButton>
+        </Grid>
+
+        <Button color="primary" onClick={handleCreateQuiz}>
+          Create Quiz
+        </Button>
+      </div>
+    </>
   );
 }
 
