@@ -508,7 +508,7 @@ app.post("/api/questions", async (req: Request<NewQuestion>, res) => {
 });
 
 //add many questions to a quiz
-app.post("/api/questions", async (req: Request<NewQuestion[]>, res) => {
+app.post("/api/questions/many", async (req: Request<NewQuestion[]>, res) => {
   const { questions } = req.body;
   try {
     const questionsRes = await prisma.question.createMany({
