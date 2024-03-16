@@ -115,7 +115,7 @@ function Dashboard() {
   return (
     <>
       <NavBar helloText={helloText} loggedIn={true} />
-      <Link to="/myquizzes"></Link>
+      <Link to="/createquiz"></Link>
       {pregeneratedQuizzes.length != 0 && (
         <>
           <h2>Quizzes from us</h2>

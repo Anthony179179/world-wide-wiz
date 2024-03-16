@@ -7,7 +7,7 @@ import LogIn from "./Components/LogIn.tsx";
 import HomePage from "./Components/HomePage.tsx";
 import SignUp from "./Components/SignUp.tsx";
 import Dashboard from "./Components/Dashboard.tsx";
-import CreateQuiz from "./Components/CreateQuiz.tsx";
+import CreateQuizUI from "./Components/CreateQuizUI.tsx";
 import MyQuizzes from "./Components/MyQuizzes.tsx";
 import MapQuiz from "./Components/MapQuiz.tsx";
 import NotFound from "./Components/NotFound.tsx";
@@ -40,7 +40,7 @@ let router = createBrowserRouter([
       },
       {
         path: "/createquiz",
-        element: <CreateQuiz />,
+        element: <CreateQuizUI />,
       },
       {
         path: "/takequiz/:quizID",
