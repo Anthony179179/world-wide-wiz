@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { AuthContext } from "../authContext";
 import axios from "axios";
 
@@ -62,18 +62,6 @@ function CreateQuizUI() {
     setCreateQuizData(newCreateQuizData);
   };
 
-  // Inside your component
-  const handleAddOption = useCallback(
-    (questionIndex: number) => {
-      setCreateQuizData((prev) => {
-        const newCreateQuizData = [...prev];
-        newCreateQuizData[questionIndex].options.push("");
-        return newCreateQuizData;
-      });
-    },
-    [setCreateQuizData]
-  );
-
   const handleOptionsChange = (
     question_index: number,
     option_index: number,
@@ -81,6 +69,12 @@ function CreateQuizUI() {
   ) => {
     const newCreateQuizData: Question[] = [...createQuizData];
 
+    if (
+      newCreateQuizData[question_index].answer ==
+      newCreateQuizData[question_index].options[option_index]
+    ) {
+      newCreateQuizData[question_index].answer = value;
+    }
     newCreateQuizData[question_index].options[option_index] = value;
     setCreateQuizData(newCreateQuizData);
   };
@@ -192,7 +186,7 @@ function CreateQuizUI() {
       console.log(error);
     }
   }
-
+  console.log(createQuizData);
   return (
     <div>
       <h1>Create a Quiz</h1>
@@ -258,7 +252,32 @@ function CreateQuizUI() {
                   }
                 />
               ))}
-              <button onClick={() => handleAddOption(index)}>Add Choice</button>
+              <button
+                onClick={() => {
+                  const newCreateQuizData = [...createQuizData];
+                  newCreateQuizData[index].options.push("");
+                  setCreateQuizData(newCreateQuizData);
+                }}
+              >
+                Add Choice
+              </button>
+              <button
+                onClick={() => {
+                  const newCreateQuizData = [...createQuizData];
+                  if (
+                    newCreateQuizData[index].answer ==
+                    newCreateQuizData[index].options[
+                      newCreateQuizData[index].options.length - 1
+                    ]
+                  ) {
+                    newCreateQuizData[index].answer = "";
+                  }
+                  newCreateQuizData[index].options.pop();
+                  setCreateQuizData(newCreateQuizData);
+                }}
+              >
+                Delete Choice
+              </button>
               <select
                 name="answer"
                 value={question.answer}
