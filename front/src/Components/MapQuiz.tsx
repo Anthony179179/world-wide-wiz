@@ -18,6 +18,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Grid,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
@@ -187,57 +188,90 @@ function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
         helloText={auth !== null && user !== null ? `Hello, ${user}!` : ""}
         loggedIn={auth !== null && user !== null}
       ></NavBar>
-      <div>
-        <h1>
-          {region ? region[0].toUpperCase() + region.slice(1) : ""} Map Quiz
-        </h1>
-        <div>
-          {isFlagsQuiz ? (
-            <img
-              style={{
-                width: "80px",
-                height: "50px",
-                border: "1px solid black",
-              }}
-              src={flagSrc}
-              alt="Flag Not Available"
-            />
-          ) : (
-            countriesArray.length > 0 && countriesArray[0].properties.ADMIN
-          )}
-        </div>
-        <div>
-          Score: {score}/{numOfCountries}
-        </div>
-        <div>{numOfCountriesRemaining} countries remaining</div>
-        <MapContainer
-          style={{
-            width: "800px",
-            height: "300px",
-            marginBottom: "5em",
-            backgroundColor: "lightblue",
-          }}
-          center={[5, 5]}
-          zoom={2}
-          attributionControl={false}
-        >
-          <GeoJSON
-            data={filteredCountries}
-            style={(country) => {
-              if (!country) {
-                return {};
-              }
-              return {
-                color: "black",
-                fillColor: countryColors[country.properties.ADMIN] || "grey",
-                fillOpacity: 1,
-                weight: 2,
-              };
+      <Grid container justifyContent="center">
+        <Grid item>
+          <h1 style={{ textAlign: "center" }}>
+            {region ? region[0].toUpperCase() + region.slice(1) : ""} Map Quiz
+          </h1>
+          <Grid container>
+            <Grid item xs={4}>
+              <div>
+                Click on{" "}
+                {isFlagsQuiz ? (
+                  <>
+                    <span>the country with the flag </span>
+                    <img
+                      style={{
+                        width: "80px",
+                        height: "50px",
+                        border: "1px solid black",
+                      }}
+                      src={flagSrc}
+                      alt="Flag Not Available"
+                    />
+                  </>
+                ) : (
+                  <span style={{ fontWeight: "bold" }}>
+                    {countriesArray.length > 0 &&
+                      countriesArray[0].properties.ADMIN}
+                  </span>
+                )}
+              </div>
+            </Grid>
+            <Grid item xs={4} alignItems="flex-end">
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-end",
+                  justifyContent: "center",
+                  height: "100%",
+                }}
+              >
+                Score: {score}/{numOfCountries}
+              </div>
+            </Grid>
+            <Grid item xs={4} alignItems="flex-end">
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-end",
+                  justifyContent: "flex-end",
+                  height: "100%",
+                }}
+              >
+                {numOfCountriesRemaining} countries remaining
+              </div>
+            </Grid>
+          </Grid>
+          <MapContainer
+            style={{
+              width: "1000px",
+              height: "300px",
+              marginBottom: "5em",
+              backgroundColor: "lightblue",
             }}
-            onEachFeature={onEachCountry}
-          />
-        </MapContainer>
-      </div>
+            center={[5, 5]}
+            zoom={2}
+            attributionControl={false}
+          >
+            <GeoJSON
+              data={filteredCountries}
+              style={(country) => {
+                if (!country) {
+                  return {};
+                }
+                return {
+                  color: "black",
+                  fillColor: countryColors[country.properties.ADMIN] || "grey",
+                  fillOpacity: 1,
+                  weight: 2,
+                };
+              }}
+              onEachFeature={onEachCountry}
+            />
+          </MapContainer>
+        </Grid>
+      </Grid>
       <Dialog
         open={dialogOpen}
         onClose={() => {
