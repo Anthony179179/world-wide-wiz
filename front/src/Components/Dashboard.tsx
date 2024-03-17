@@ -164,28 +164,27 @@ function Dashboard() {
         justifyContent={"center"}
       >
         <Grid item>
+          <Grid container alignContent="center" spacing={2}>
+            <Grid item>
+              <h2>My Quizzes</h2>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="outlined"
+                startIcon={<AddCircleOutline />}
+                style={{
+                  marginTop: "23px",
+                  color: "#103060",
+                  border: "1px solid #103060",
+                }}
+                onClick={() => navigate("/createquiz")}
+              >
+                Create Quiz
+              </Button>
+            </Grid>
+          </Grid>
           {yourQuizzesWithScoresData.length != 0 && (
             <>
-              <Grid container alignContent="center" spacing={2}>
-                <Grid item>
-                  <h2>My Quizzes</h2>
-                </Grid>
-                <Grid item>
-                  <Button
-                    variant="outlined"
-                    startIcon={<AddCircleOutline />}
-                    style={{
-                      marginTop: "23px",
-                      color: "#103060",
-                      border: "1px solid #103060",
-                    }}
-                    onClick={() => navigate("/createquiz")}
-                  >
-                    Create Quiz
-                  </Button>
-                </Grid>
-              </Grid>
-
               <Box
                 sx={{
                   display: "flex",
