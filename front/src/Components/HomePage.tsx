@@ -1,10 +1,12 @@
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../authContext";
 import NavBar from "./NavBar";
+import { Button } from "@mui/material";
 
 function HomePage() {
   const { auth } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -15,6 +17,7 @@ function HomePage() {
             backgroundImage: "url(/earth.jpg)",
             backgroundSize: "cover",
             backgroundAttachment: "fixed",
+            backgroundPosition: "center",
             height: "100%",
             display: "flex",
             flexDirection: "column",
@@ -24,35 +27,35 @@ function HomePage() {
             textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
           }}
         >
-          <h1>Welcome!</h1>
-          <Link
+          <h1>LEARN ABOUT THE WORLD!</h1>
+          <Button
+            variant="contained"
             style={{
-              color: "white",
               backgroundColor: "rgba(0, 0, 0, 0.5)",
               padding: "10px 20px",
               borderRadius: "5px",
-              textDecoration: "none",
               margin: "10px",
             }}
-            to={auth ? "/dashboard" : "/login"}
+            onClick={() => {
+              auth ? navigate("/dashboard") : navigate("/login");
+            }}
           >
-            {" "}
-            Log In{" "}
-          </Link>
-          <Link
+            Log In
+          </Button>
+          <Button
             style={{
-              color: "white",
               backgroundColor: "rgba(0, 0, 0, 0.5)",
               padding: "10px 20px",
               borderRadius: "5px",
-              textDecoration: "none",
               margin: "10px",
             }}
-            to={auth ? "/dashboard" : "/signup"}
+            variant="contained"
+            onClick={() => {
+              auth ? navigate("/dashboard") : navigate("/signup");
+            }}
           >
-            {" "}
-            Sign Up{" "}
-          </Link>
+            Sign Up
+          </Button>
         </div>
       </div>
     </>
