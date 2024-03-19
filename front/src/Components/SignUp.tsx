@@ -1,7 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import Input from "@mui/joy/Input";
-import "./../styles/index.css";
-import { Button } from "@mui/joy";
+import { Button, Input } from "@mui/joy";
 import { Link, useNavigate } from "react-router-dom";
 import { Alert, Snackbar } from "@mui/material";
 import axios from "axios";
