@@ -55,85 +55,106 @@ function LogIn() {
   return (
     <>
       <NavBar helloText="" loggedIn={false}></NavBar>
-      <div
-        style={{
-          height: "80vh",
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div>
-          <h2 style={{ textAlign: "start", paddingLeft: "1vw" }}>Log In</h2>
+      <div style={{ height: "100vh" }}>
+        <div
+          style={{
+            backgroundImage: "url(/earth.jpg)",
+            backgroundSize: "cover",
+            backgroundAttachment: "fixed",
+            height: "100%",
+            backgroundPosition: "center",
+          }}
+        >
           <div
             style={{
-              width: "20vw",
-              height: "40vh",
-              padding: "0px 2.5vw 0px 2.5vw",
-              backgroundColor: "whitesmoke",
-              boxShadow: "1vw 1vh",
-              borderStyle: "solid",
-              borderWidth: "2px",
-              borderRadius: "10px",
-              borderColor: "black",
+              height: "100%",
+              width: "100%",
               display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-evenly",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <div style={{ textAlign: "start" }}>
-              <div>
-                <h3>Username</h3>
-                <Input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter Username"
-                />
-              </div>
-              <div>
-                <h3>Password</h3>
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter Username"
-                />
-              </div>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-evenly",
-                alignItems: "center",
-              }}
-            >
-              <Button
-                size="lg"
-                onClick={submitLogin}
-                style={{ backgroundColor: "#103060", borderColor: "black" }}
+            <div>
+              <h2
+                style={{
+                  textAlign: "start",
+                  paddingLeft: "1vw",
+                  color: "white",
+                  textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+                }}
               >
                 Log In
-              </Button>
-              <Link to={"/signup"}>Don't have an account?</Link>
+              </h2>
+              <div
+                style={{
+                  width: "20vw",
+                  height: "40vh",
+                  padding: "0px 2.5vw 0px 2.5vw",
+                  backgroundColor: "whitesmoke",
+                  boxShadow: "1vw 1vh",
+                  borderStyle: "solid",
+                  borderWidth: "2px",
+                  borderRadius: "10px",
+                  borderColor: "black",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-evenly",
+                }}
+              >
+                <div style={{ textAlign: "start" }}>
+                  <div>
+                    <h3>Username</h3>
+                    <Input
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="Enter Username"
+                    />
+                  </div>
+                  <div>
+                    <h3>Password</h3>
+                    <Input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter Username"
+                    />
+                  </div>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-evenly",
+                    alignItems: "center",
+                  }}
+                >
+                  <Button
+                    size="lg"
+                    onClick={submitLogin}
+                    style={{ backgroundColor: "#103060", borderColor: "black" }}
+                  >
+                    Log In
+                  </Button>
+                  <Link to={"/signup"}>Don't have an account?</Link>
+                </div>
+              </div>
+              <Snackbar
+                open={open}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                message={errorMessage}
+              >
+                <Alert
+                  onClose={handleClose}
+                  severity="error"
+                  variant="filled"
+                  sx={{ width: "100%" }}
+                >
+                  {errorMessage}
+                </Alert>
+              </Snackbar>
             </div>
           </div>
-          <Snackbar
-            open={open}
-            autoHideDuration={6000}
-            onClose={handleClose}
-            message={errorMessage}
-          >
-            <Alert
-              onClose={handleClose}
-              severity="error"
-              variant="filled"
-              sx={{ width: "100%" }}
-            >
-              {errorMessage}
-            </Alert>
-          </Snackbar>
         </div>
       </div>
     </>

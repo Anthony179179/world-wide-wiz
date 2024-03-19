@@ -266,11 +266,24 @@ function CreateQuizUI() {
         if (responseQuestions.status != 201) {
           setMessage(responseQuestions.data.error);
           setOpenErrorSnackbar(true);
+          return;
         }
 
         setMessage("");
         setOpenErrorSnackbar(false);
         setOpenSuccessSnackbar(true);
+        setCreateQuizData([
+          {
+            question: "",
+            answer: "",
+            options: [],
+            score: 0,
+            order: 0,
+            type: "short-answer",
+          },
+        ]);
+        setQuizName("");
+        setQuizDescription("");
       } else {
         setMessage(response.data.error);
         setOpenErrorSnackbar(true);
@@ -281,7 +294,7 @@ function CreateQuizUI() {
       console.log(error);
     }
   }
-  console.log(createQuizData);
+
   return (
     <>
       <NavBar helloText={helloText} loggedIn={true} />

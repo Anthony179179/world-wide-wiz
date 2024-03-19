@@ -177,7 +177,7 @@ function Profile() {
         console.log(error);
       }
     })();
-  }, []);
+  }, [username]);
 
   return (
     <>
