@@ -30,14 +30,28 @@ function shuffle(array: any) {
   return array;
 }
 
-function filterCountriesByRegion(countries, countriesWithRegions, region) {
-  return countries.filter((country) => {
+interface countriesJSONWithRegions {
+  "name": string,
+  "alpha-2": string,
+  "alpha-3": string,
+  "country-code": string,
+  "iso_3166-2": string,
+  "region": string,
+  "sub-region": string,
+  "intermediate-region": string,
+  "region-code": string,
+  "sub-region-code": string,
+  "intermediate-region-code": string
+}
+
+function filterCountriesByRegion(countries: CountryData[], countriesWithRegions: countriesJSONWithRegions[], region: string | undefined): CountryData[] {
+  return countries.filter((country: { properties: { ISO_A3: any; }; }) => {
     const countryData = countriesWithRegions.find(
-      (countryWithRegion) =>
+      (countryWithRegion: { [x: string]: any; }) =>
         countryWithRegion["alpha-3"] === country.properties.ISO_A3
     );
     return (
-      countryData &&
+      countryData && region &&
       countryData.region.toLowerCase().trim() === region.toLowerCase().trim()
     );
   });

@@ -8,7 +8,7 @@ function AuthProvider({ children }: any) {
   const [user, setUser] = useState<string | null>(null);
   const [currentQuiz, setCurrentQuiz] = useState<number | null>(null);
 
-  const [cookies, setCookie, removeCookie] = useCookies(["loggedIn"]);
+  const [cookies] = useCookies(["loggedIn"]);
 
   useEffect(() => {
     const isAuth = async () => {

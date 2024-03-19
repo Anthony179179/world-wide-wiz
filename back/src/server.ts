@@ -10,6 +10,9 @@ import * as argon2 from "argon2";
 import crypto from "crypto";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import * as url from "url";
+
+// let __dirname = require('url').pathToFileURL(__filename).toString();
 
 const prisma = new PrismaClient();
 
@@ -28,6 +31,8 @@ app.use(
     optionsSuccessStatus: 200,
   })
 );
+
+app.use(express.static("public"));
 
 let authorize: RequestHandler = async (req: Request, res, next) => {
   try {
@@ -568,17 +573,6 @@ app.put("/api/quizscores", async (req, res) => {
   }
 });
 
-// edit a score to a quiz question
-app.put("/api/questionscores", async (req, res) => {
-  return res.json();
-});
-
-// edit a quiz
-app.put("/api/quizzes", async (req, res) => {
-  return res.json();
-});
-
-// edit a question to a quiz
-app.put("/api/questions", async (req, res) => {
-  return res.json();
+app.get("*", (req, res) => { // 2
+  res.sendFile("public/index.html", { root: __dirname });
 });

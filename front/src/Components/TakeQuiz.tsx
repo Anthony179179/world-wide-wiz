@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Question } from "./utils";
 import { useContext, useEffect, useState } from "react";
 import { Input } from "@mui/joy";
@@ -23,8 +23,6 @@ function TakeQuiz() {
     const [questionOptions, setQuestionOptions] = useState<string[]>([]);
     const [questionScore, setQuestionScore] = useState<number>(0);
     const [helloText, setHelloText] = useState<string>("");
-
-    const [currentQuestionType, setCurrentQuestionType] = useState<string>("");
 
     const [answer, setAnswer] = useState<string>("");
     const [questionScores, setQuestionScores] = useState<number[]>([]);

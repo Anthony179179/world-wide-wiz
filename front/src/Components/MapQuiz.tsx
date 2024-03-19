@@ -44,7 +44,7 @@ function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
 
   const { region } = useParams();
 
-  const mapData = data as CountriesJSONData;
+  const mapData: any = data;
   let countries = mapData.features;
 
   let filteredCountries = filterCountriesByRegion(
@@ -255,6 +255,7 @@ function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
             attributionControl={false}
           >
             <GeoJSON
+              // @ts-ignore
               data={filteredCountries}
               style={(country) => {
                 if (!country) {
