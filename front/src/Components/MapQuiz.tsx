@@ -245,13 +245,13 @@ function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
           </Grid>
           <MapContainer
             style={{
-              width: "1000px",
-              height: "300px",
+              width: "90vw",
+              height: "70vh",
               marginBottom: "5em",
               backgroundColor: "lightblue",
             }}
-            center={[5, 5]}
-            zoom={2}
+            center={[53, 20]}
+            zoom={4}
             attributionControl={false}
           >
             <GeoJSON
