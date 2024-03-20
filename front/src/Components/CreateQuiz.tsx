@@ -167,7 +167,6 @@ function CreateQuizUI() {
   async function handleCreateQuiz() {
     try {
       const errors: string[] = [];
-      const user = "khangarook"; // need to change
 
       if (quizName === "") {
         errors.push("Quiz needs a name");
