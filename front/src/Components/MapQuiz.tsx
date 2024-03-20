@@ -44,7 +44,7 @@ function MapQuiz({ isFlagsQuiz }: MapQuizProps) {
 
   const { region } = useParams();
 
-  const mapData: any = data;
+  const mapData: any = data as unknown as CountriesJSONData;
   let countries = mapData.features;
 
   let filteredCountries = filterCountriesByRegion(

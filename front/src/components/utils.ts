@@ -70,6 +70,8 @@ function useStableCallback<Args extends unknown[], Return>(
   return stableCallback;
 }
 
+type NestedNumberArray = number | NestedNumberArray[];
+
 interface CountryData {
   type: string;
   properties: {
@@ -78,7 +80,7 @@ interface CountryData {
   };
   geometry: {
     type: string;
-    coordinates: number[];
+    coordinates: NestedNumberArray[];
   };
 }
 
