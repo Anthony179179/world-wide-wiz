@@ -15,7 +15,7 @@ npm i
 ```
 Create a new file called ```.env``` in the ```prisma``` directory and add the following line in it replacing ```USER```, ```PASSWORD```, ```HOST```, ```PORT```, and ```DATABASE``` with your postgres credentials (you can run the following command as a shortcut, filling in with your details)
 ```
-echo DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE" > ./prisma/.env 
+echo 'DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"' > ./prisma/.env 
 npx prisma migrate reset
 npm run all
 ```
