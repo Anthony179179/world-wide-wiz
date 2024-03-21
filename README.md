@@ -1,21 +1,19 @@
-# make sure you have postgres installed and a postgres server started
-# do not run the web app on Safari
-
+## Make sure you have postgres installed and a postgres server started
+## Do not run the web app on Safari, preferably use Chrome
 git clone https://github.com/Anthony179179/j2g.git
 cd j2g
-
-# in one terminal
+# Open up 2 terminals
+## On terminal number 1:
 cd back
 npm i
-cd prisma
-# create a new file in the prisma folder called .env and add the following line in it replacing USER, PASSWORD, HOST, PORT, and DATABASE with your postgres credentials (you can run the following command for shortcut)
-echo DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE" > .env 
-npx prisma migrate
+### Create a new file called .env and add the following line in it replacing USER, PASSWORD, HOST, PORT, and DATABASE with your postgres credentials (you can run the following command as a shortcut, filling in with your details)
+echo DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE" > .env\ 
+cd prisma\
+npx prisma migrate\
 npm run all
-
-# in another terminal...
-cd front/
-npm i
+## On terminal number 2:
+cd front\
+npm i\
 npm run dev
 
-# go to the url provided 
+# Navigate to the url provided (most probably localhost:5173)
